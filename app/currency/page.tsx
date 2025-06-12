@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import CurrencyCard from "./components/CurrencyCard";
 import { useBaseCurrencyStore } from "./hooks/useBaseCurrencyStore";
 import { useExchangeRates } from "./hooks/useExchangeRates";
+//import { dummyData } from "@/lib/sampleData";
 
 export default function CurrencyPage() {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
@@ -49,7 +50,7 @@ export default function CurrencyPage() {
           hour12: false, // 24시간제
         })}{" "}
       </p>
-      <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <CurrencyCard
           currencies={Object.keys(data)}
           setCurrency={setCurrency1}

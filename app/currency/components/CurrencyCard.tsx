@@ -25,9 +25,9 @@ export default function CurrencyCard({
   const { flag, names } = getCountryInfo(currency);
   const filteredName = names["ko"];
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="">
+      <CardHeader className="h-[0px]">
+        <CardTitle className="flex items-center gap-2 text-base h-[0px]">
           <Image src={flag} width={30} height={30} alt={currency} />
           <div className="flex items-center">
             <select
@@ -49,7 +49,7 @@ export default function CurrencyCard({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="">
         <Input
           type="text"
           inputMode="numeric"
