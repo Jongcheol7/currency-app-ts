@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
 import Image from "next/image";
-import { getCountryInfo, getFlagSrc } from "@/lib/contryInfo";
+import { getCountryInfo } from "@/lib/contryInfo";
 
 type Props = {
   currencies: string[];
