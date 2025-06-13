@@ -5,27 +5,47 @@ import { CountryInfo } from "@/lib/contryInfo";
 import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
 
 type Props = {
+  cardNum: number;
   currencies: string[];
   setCurrency: (value: string) => void;
   currency: string;
   baseAmount: number;
   setBaseAmount: (value: number) => void;
   changeData: Record<string, string>;
+  focusedCard: number;
+  setFocusedCard: (value: number) => void;
+  calculatedAmt: number;
+  setCalculatedAmt: (value: number) => void;
 };
 
 export default function CurrencyCard({
+  cardNum,
   currencies,
   setCurrency,
   currency,
   baseAmount,
   setBaseAmount,
   changeData,
+  focusedCard,
+  setFocusedCard,
+  calculatedAmt,
+  setCalculatedAmt,
 }: Props) {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
 
   const { flag, names } = CountryInfo[currency];
 
   const filteredName = names["ko"];
+
+  console.log("cardNum : ", cardNum);
+  console.log("currency : ", currency);
+  console.log("baseCurrency : ", baseCurrency);
+  console.log("changeData : ", changeData);
+  console.log("baseAmount : ", baseAmount);
+  console.log("focusedCard : ", focusedCard);
+  console.log("calculatedAmt : ", calculatedAmt);
+  console.log("setCalculatedAmt type:", typeof setCalculatedAmt); // function이어야 정상
+
   return (
     <Card className="">
       <CardHeader className="h-[0px]">
@@ -64,7 +84,9 @@ export default function CurrencyCard({
           pattern="[0-9]*"
           value={
             currency === baseCurrency
-              ? baseAmount.toLocaleString("ko-KR")
+              ? cardNum === focusedCard && calculatedAmt !== 0
+                ? calculatedAmt.toLocaleString("ko-KR")
+                : baseAmount.toLocaleString("ko-KR")
               : Number(changeData[currency]).toLocaleString("ko-KR")
           }
           onChange={(e) => {
@@ -75,6 +97,10 @@ export default function CurrencyCard({
               setBaseCurrency(currency);
               setBaseAmount(parsed);
             }
+          }}
+          onClick={() => {
+            setFocusedCard(cardNum);
+            setCalculatedAmt(0);
           }}
         />
       </CardContent>

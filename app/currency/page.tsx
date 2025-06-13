@@ -24,6 +24,9 @@ export default function CurrencyPage() {
   const [currency4, setCurrency4] = useState("JPY");
   const [baseAmount, setBaseAmount] = useState(1);
   const [calculatedAmt, setCalculatedAmt] = useState(0);
+  const [focusedCard, setFocusedCard] = useState(1);
+
+  console.log("focusedCard : ", focusedCard);
 
   const { data, isLoading, error, dataUpdatedAt } = useExchangeRates();
   if (isLoading) return <div>불러오는 중...</div>;
@@ -57,46 +60,81 @@ export default function CurrencyPage() {
             hour12: false, // 24시간제
           })}{" "}
         </p>
-        <p>결과값: {calculatedAmt}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <CurrencyCard
+          cardNum={1}
           currencies={currencies}
           setCurrency={setCurrency1}
           currency={currency1}
           baseAmount={baseAmount}
           setBaseAmount={setBaseAmount}
           changeData={changeData}
+          focusedCard={focusedCard}
+          setFocusedCard={setFocusedCard}
+          calculatedAmt={calculatedAmt}
+          setCalculatedAmt={setCalculatedAmt}
         />
         <CurrencyCard
+          cardNum={2}
           currencies={Object.keys(data)}
           setCurrency={setCurrency2}
           currency={currency2}
           baseAmount={baseAmount}
           setBaseAmount={setBaseAmount}
           changeData={changeData}
+          focusedCard={focusedCard}
+          setFocusedCard={setFocusedCard}
+          calculatedAmt={calculatedAmt}
+          setCalculatedAmt={setCalculatedAmt}
         />
         <CurrencyCard
+          cardNum={3}
           currencies={Object.keys(data)}
           setCurrency={setCurrency3}
           currency={currency3}
           baseAmount={baseAmount}
           setBaseAmount={setBaseAmount}
           changeData={changeData}
+          focusedCard={focusedCard}
+          setFocusedCard={setFocusedCard}
+          calculatedAmt={calculatedAmt}
+          setCalculatedAmt={setCalculatedAmt}
         />
         {!isMobile && (
           <CurrencyCard
+            cardNum={4}
             currencies={Object.keys(data)}
             setCurrency={setCurrency4}
             currency={currency4}
             baseAmount={baseAmount}
             setBaseAmount={setBaseAmount}
             changeData={changeData}
+            focusedCard={focusedCard}
+            setFocusedCard={setFocusedCard}
+            calculatedAmt={calculatedAmt}
+            setCalculatedAmt={setCalculatedAmt}
           />
         )}
       </div>
-      <NumberPad setCalculatedAmt={setCalculatedAmt} />
+      <NumberPad
+        setCalculatedAmt={(val) => {
+          // focusedCard가 기준
+          const selectedCurrency =
+            focusedCard === 1
+              ? currency1
+              : focusedCard === 2
+              ? currency2
+              : focusedCard === 3
+              ? currency3
+              : currency4;
+
+          setBaseCurrency(selectedCurrency);
+          setBaseAmount(val);
+          setCalculatedAmt(0); // 값 반영 후 초기화
+        }}
+      />
     </main>
   );
 }
