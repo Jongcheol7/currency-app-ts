@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
 import Image from "next/image";
-import { getCountryInfo } from "@/lib/contryInfo";
+import { CountryInfo } from "@/lib/contryInfo";
+import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
 
 type Props = {
   currencies: string[];
@@ -22,13 +22,21 @@ export default function CurrencyCard({
   changeData,
 }: Props) {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
-  const { flag, names } = getCountryInfo(currency);
+
+  const { flag, names } = CountryInfo[currency];
+
   const filteredName = names["ko"];
   return (
     <Card className="">
       <CardHeader className="h-[0px]">
         <CardTitle className="flex items-center gap-2 text-base h-[0px]">
-          <Image src={flag} width={30} height={30} alt={currency} />
+          <Image
+            src={flag}
+            width={40}
+            height={30}
+            alt={currency}
+            className="border-2"
+          />
           <div className="flex items-center">
             <select
               className="pb-1 mr-4"
@@ -49,7 +57,7 @@ export default function CurrencyCard({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="">
+      <CardContent className="h-[25px]">
         <Input
           type="text"
           inputMode="numeric"
