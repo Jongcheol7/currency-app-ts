@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function GET() {
   try {
     const rates = await prisma.currentRate.findMany();
@@ -29,7 +33,7 @@ export async function GET() {
 }
 
 export async function POST() {
-  const API_KEY = process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY;
+  const API_KEY = process.env.EXCHANGE_RATE_API_KEY;
   const EXTERNAL_API = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/KRW`;
 
   try {
@@ -38,6 +42,8 @@ export async function POST() {
 
     const json = await res.json();
     const rates: Record<string, number> = json.conversion_rates;
+
+    console.log(rates);
 
     //DB에 insert 하자.
     const entries = Object.entries(rates);
@@ -48,14 +54,29 @@ export async function POST() {
     //     create: { currency, rate },
     //   });
     // }
-    const operations = entries.map(([currency, rate]) =>
-      prisma.currentRate.upsert({
-        where: { currency },
-        update: { rate },
-        create: { currency, rate },
-      })
-    );
-    await Promise.all(operations);
+    const chunkSize = 10;
+    for (let i = 0; i < entries.length; i += chunkSize) {
+      const chunk = entries.slice(i, i + chunkSize);
+      const operations = chunk.map(([currency, rate]) =>
+        prisma.currentRate.upsert({
+          where: { currency },
+          update: { rate },
+          create: { currency, rate },
+        })
+      );
+      await Promise.all(operations);
+      // 💡 너무 빠르게 보내면 Supabase가 뻗음 → 살짝 쉬어줌
+      await delay(200);
+    }
+
+    // const operations = entries.map(([currency, rate]) =>
+    //   prisma.currentRate.upsert({
+    //     where: { currency },
+    //     update: { rate },
+    //     create: { currency, rate },
+    //   })
+    // );
+    // console.log(operations);
 
     return NextResponse.json({ success: true, count: entries.length });
   } catch (err) {
