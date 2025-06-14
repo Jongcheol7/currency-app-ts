@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { CountryInfo } from "@/lib/contryInfo";
 import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
-import { AreaChart, BarChart2, LineChart } from "lucide-react";
-import { fetchExchangeChartData } from "@/lib/api";
+import { LineChart } from "lucide-react";
+//import { fetchExchangeChartData } from "@/lib/api";
 
 type Props = {
   cardNum: number;
