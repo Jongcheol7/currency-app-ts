@@ -41,13 +41,21 @@ export async function POST() {
 
     //DB에 insert 하자.
     const entries = Object.entries(rates);
-    for (const [currency, rate] of entries) {
-      await prisma.currentRate.upsert({
+    // for (const [currency, rate] of entries) {
+    //   await prisma.currentRate.upsert({
+    //     where: { currency },
+    //     update: { rate },
+    //     create: { currency, rate },
+    //   });
+    // }
+    const operations = entries.map(([currency, rate]) =>
+      prisma.currentRate.upsert({
         where: { currency },
         update: { rate },
         create: { currency, rate },
-      });
-    }
+      })
+    );
+    await Promise.all(operations);
 
     return NextResponse.json({ success: true, count: entries.length });
   } catch (err) {
