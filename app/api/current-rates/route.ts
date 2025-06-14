@@ -6,7 +6,13 @@ export async function GET() {
     const rates = await prisma.currentRate.findMany();
     const rateData: Record<string, number> = {};
 
-    const updatedDate = rates[0].updatedAt;
+    let updatedDate = new Date();
+    if (rates.length > 0) {
+      updatedDate = rates[0].updatedAt;
+    } else {
+      updatedDate = new Date("19990101");
+    }
+
     for (const rate of rates) {
       rateData[rate.currency] = rate.rate;
     }
