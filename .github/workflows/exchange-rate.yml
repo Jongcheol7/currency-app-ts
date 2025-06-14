@@ -1,0 +1,13 @@
+name: Update Exchange Rate
+
+on:
+  schedule:
+    - cron: "0 * * * *" # 매시 정각 실행 (UTC 기준)
+  workflow_dispatch: # 수동 실행도 가능
+
+jobs:
+  ping-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST to Exchange Rate API
+        run: curl -X POST https://currency-app-ts.vercel.app/api/current-rates
