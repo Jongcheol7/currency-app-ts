@@ -8,6 +8,7 @@ import { CountryInfo } from "@/lib/contryInfo";
 import NumberPad from "./components/NumberPad";
 import useIsMobile from "./hooks/useIsMobile";
 import { useBaseCurrencyStore } from "./hooks/useBaseCurrencyStore";
+import PostRatesButton from "./components/PostRateButton";
 //import { dummyData } from "@/lib/sampleData";
 
 export default function CurrencyPage() {
@@ -28,18 +29,23 @@ export default function CurrencyPage() {
 
   console.log("focusedCard : ", focusedCard);
 
-  const { data, isLoading, error, dataUpdatedAt } = useExchangeRates();
+  const { data, isLoading, error } = useExchangeRates();
   if (isLoading) return <div>불러오는 중...</div>;
   if (error) return <div>에러가 발생했습니다...</div>;
   //const data: Record<string, number> = dummyData;
+  const rateData = data.rateData;
+  const updatedDate = data.updatedDate;
 
-  const ratio = baseAmount / data[baseCurrency];
+  const ratio = baseAmount / rateData[baseCurrency];
 
   const changeData: Record<string, string> = {};
-  for (const [currency, rate] of Object.entries(data) as [string, number][]) {
+  for (const [currency, rate] of Object.entries(rateData) as [
+    string,
+    number
+  ][]) {
     changeData[currency] = (rate * ratio).toFixed(3);
   }
-  console.log("data : ", data);
+  console.log("data : ", rateData);
   console.log("changeDate : ", changeData);
 
   const currencies = Object.keys(CountryInfo);
@@ -47,11 +53,11 @@ export default function CurrencyPage() {
   return (
     <main className="p-6 space-y-3">
       <div className="flex justify-between">
-        <p className="font-bold">※ 기준 화폐 : {baseCurrency}</p>
-        <p className="font-bold">※ 기준 금액 : {baseAmount.toLocaleString()}</p>
+        {/* <p className="font-bold">※ 기준 화폐 : {baseCurrency}</p> */}
+        {/* <p className="font-bold">※ 기준 금액 : {baseAmount.toLocaleString()}</p> */}
         <p className="font-bold">
           ※ 마지막 갱신 시간 :{" "}
-          {new Date(dataUpdatedAt).toLocaleString("ko", {
+          {new Date(updatedDate).toLocaleString("ko", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -60,6 +66,7 @@ export default function CurrencyPage() {
             hour12: false, // 24시간제
           })}{" "}
         </p>
+        {process.env.NODE_ENV === "development" && <PostRatesButton />}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -78,7 +85,7 @@ export default function CurrencyPage() {
         />
         <CurrencyCard
           cardNum={2}
-          currencies={Object.keys(data)}
+          currencies={Object.keys(rateData)}
           setCurrency={setCurrency2}
           currency={currency2}
           baseAmount={baseAmount}
@@ -91,7 +98,7 @@ export default function CurrencyPage() {
         />
         <CurrencyCard
           cardNum={3}
-          currencies={Object.keys(data)}
+          currencies={Object.keys(rateData)}
           setCurrency={setCurrency3}
           currency={currency3}
           baseAmount={baseAmount}
@@ -105,7 +112,7 @@ export default function CurrencyPage() {
         {!isMobile && (
           <CurrencyCard
             cardNum={4}
-            currencies={Object.keys(data)}
+            currencies={Object.keys(rateData)}
             setCurrency={setCurrency4}
             currency={currency4}
             baseAmount={baseAmount}

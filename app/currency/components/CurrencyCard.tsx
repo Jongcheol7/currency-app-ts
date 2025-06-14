@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { CountryInfo } from "@/lib/contryInfo";
 import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
+import { AreaChart, BarChart2, LineChart } from "lucide-react";
+import { fetchExchangeChartData } from "@/lib/api";
 
 type Props = {
   cardNum: number;
@@ -37,17 +39,17 @@ export default function CurrencyCard({
 
   const filteredName = names["ko"];
 
-  console.log("cardNum : ", cardNum);
-  console.log("currency : ", currency);
-  console.log("baseCurrency : ", baseCurrency);
-  console.log("changeData : ", changeData);
-  console.log("baseAmount : ", baseAmount);
-  console.log("focusedCard : ", focusedCard);
-  console.log("calculatedAmt : ", calculatedAmt);
-  console.log("setCalculatedAmt type:", typeof setCalculatedAmt); // function이어야 정상
+  // console.log("cardNum : ", cardNum);
+  // console.log("currency : ", currency);
+  // console.log("baseCurrency : ", baseCurrency);
+  // console.log("changeData : ", changeData);
+  // console.log("baseAmount : ", baseAmount);
+  // console.log("focusedCard : ", focusedCard);
+  // console.log("calculatedAmt : ", calculatedAmt);
+  // console.log("setCalculatedAmt type:", typeof setCalculatedAmt); // function이어야 정상
 
   return (
-    <Card className="">
+    <Card className={baseCurrency === currency ? "bg-blue-200" : ""}>
       <CardHeader className="h-[0px]">
         <CardTitle className="flex items-center gap-2 text-base h-[0px]">
           <Image
@@ -77,7 +79,7 @@ export default function CurrencyCard({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="h-[25px]">
+      <CardContent className="h-[25px] flex items-center gap-1">
         <Input
           type="text"
           inputMode="numeric"
@@ -103,6 +105,17 @@ export default function CurrencyCard({
             setCalculatedAmt(0);
           }}
         />
+        <button
+          onClick={async () => {
+            const res = await fetch(
+              "https://api.exchangerate.host/2024-06-05?base=USD&symbols=KRW"
+            );
+            const json = await res.json();
+            console.log(json);
+          }}
+        >
+          <LineChart className="ml-1 text-gray-600" size={22} />
+        </button>
       </CardContent>
     </Card>
   );

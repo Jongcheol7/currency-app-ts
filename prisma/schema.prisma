@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CurrentRate {
+  id        Int       @id @default(autoincrement())
+  currency  String
+  rate      Float
+  updatedAt DateTime  @updatedAt
+
+  @@unique([currency])
+  @@map("currentRate")
+}
+
+model ExchangeRate {
+  id  Int @id @default(autoincrement())
+  base  String
+  target  String
+  rate  Float 
+  date  DateTime 
+
+  @@unique([base,target,date])
+  @@map("exchangeRate")
+}
