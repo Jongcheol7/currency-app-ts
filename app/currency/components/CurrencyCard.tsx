@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { CountryInfo } from "@/lib/contryInfo";
 import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
-import { LineChart } from "lucide-react";
 import { useLangueStore } from "../hooks/useLangueStore";
 //import { fetchExchangeChartData } from "@/lib/api";
 
