@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CountryInfo } from "@/lib/contryInfo";
 import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
 import { LineChart } from "lucide-react";
+import { useLangueStore } from "../hooks/useLangueStore";
 //import { fetchExchangeChartData } from "@/lib/api";
 
 type Props = {
@@ -28,6 +29,8 @@ type Props = {
   isMobile: boolean;
 };
 
+type LangCode = "ko" | "en" | "ja" | "zh" | "es";
+
 export default function CurrencyCard({
   cardNum,
   currencies,
@@ -44,7 +47,9 @@ export default function CurrencyCard({
 }: Props) {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
   const { flag } = CountryInfo[currency];
-  // const filteredName = names["ko"];
+
+  const { language: settingLanguage } = useLangueStore();
+  const lang = settingLanguage as LangCode;
 
   return (
     <Card className={baseCurrency === currency ? "bg-blue-200" : ""}>
@@ -69,14 +74,14 @@ export default function CurrencyCard({
             >
               {currencies.map((currency) => (
                 <option key={currency} value={currency}>
-                  {changeData[currency].names.ko} ({currency})
+                  {changeData[currency].names[lang]} ({currency})
                 </option>
               ))}
             </select>
           </div>
         </CardTitle>
         <p className="ml-13 font-bold text-xs">
-          {changeData[currency].unit.ko}
+          {changeData[currency].unit[lang]}
         </p>
       </CardHeader>
       <CardContent className="h-[25px] flex items-center gap-1">
