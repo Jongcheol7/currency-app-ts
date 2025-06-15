@@ -27,7 +27,7 @@ export default function CurrencyPage() {
   const [calculatedAmt, setCalculatedAmt] = useState(0);
   const [focusedCard, setFocusedCard] = useState(1);
 
-  console.log("focusedCard : ", focusedCard);
+  //console.log("focusedCard : ", focusedCard);
 
   const { data, isLoading, error } = useExchangeRates();
   if (isLoading) return <div>불러오는 중...</div>;
@@ -56,16 +56,16 @@ export default function CurrencyPage() {
       unit: { ko: string; en: string; ja: string; zh: string; es: string };
     }
   ][]) {
-    console.log("currency: ", currency);
-    console.log("rateAndNamesAndUnit: ", rateAndNamesAndUnit);
+    //console.log("currency: ", currency);
+    //console.log("rateAndNamesAndUnit: ", rateAndNamesAndUnit);
     changeData[currency] = {
       rate: Number((rateAndNamesAndUnit.rate * ratio).toFixed(3)),
       names: rateAndNamesAndUnit.names,
       unit: rateAndNamesAndUnit.unit,
     };
   }
-  console.log("data2 : ", rateData);
-  console.log("changeDate : ", changeData);
+  //console.log("data2 : ", rateData);
+  //console.log("changeDate : ", changeData);
 
   const currencies = Object.keys(CountryInfo);
 

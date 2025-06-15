@@ -10,7 +10,7 @@ export default function LanguegePopup({ setIsLanPopShow }: Props) {
   const { language, setLanguage } = useLangueStore();
   const [selectedLanguage, setSelectedLanguage] = useState(language);
 
-  console.log("zustand langauge : ", language);
+  //console.log("zustand langauge : ", language);
 
   const handleConfirm = () => {
     setLanguage(selectedLanguage);

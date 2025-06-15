@@ -39,7 +39,7 @@ export async function GET() {
       }
     }
 
-    console.log("조회용 data : ", rateData);
+    //console.log("조회용 data : ", rateData);
 
     return NextResponse.json({ rateData, updatedDate });
   } catch (err) {
@@ -61,17 +61,10 @@ export async function POST() {
     const json = await res.json();
     const rates: Record<string, number> = json.conversion_rates;
 
-    console.log(rates);
+    //console.log(rates);
 
     //DB에 insert 하자.
     const entries = Object.entries(rates);
-    // for (const [currency, rate] of entries) {
-    //   await prisma.currentRate.upsert({
-    //     where: { currency },
-    //     update: { rate },
-    //     create: { currency, rate },
-    //   });
-    // }
     const chunkSize = 10;
     for (let i = 0; i < entries.length; i += chunkSize) {
       const chunk = entries.slice(i, i + chunkSize);
@@ -86,15 +79,6 @@ export async function POST() {
       // 💡 너무 빠르게 보내면 Supabase가 뻗음 → 살짝 쉬어줌
       await delay(200);
     }
-
-    // const operations = entries.map(([currency, rate]) =>
-    //   prisma.currentRate.upsert({
-    //     where: { currency },
-    //     update: { rate },
-    //     create: { currency, rate },
-    //   })
-    // );
-    // console.log(operations);
 
     return NextResponse.json({ success: true, count: entries.length });
   } catch (err) {

@@ -111,17 +111,6 @@ export default function CurrencyCard({
             setCalculatedAmt(0);
           }}
         />
-        <button
-          onClick={async () => {
-            const res = await fetch(
-              "https://api.exchangerate.host/2024-06-05?base=USD&symbols=KRW"
-            );
-            const json = await res.json();
-            console.log(json);
-          }}
-        >
-          <LineChart className="ml-1 text-gray-600" size={22} />
-        </button>
       </CardContent>
     </Card>
   );
