@@ -7,8 +7,20 @@ import {
 } from "@react-google-maps/api";
 import { useEffect, useState, useRef, useCallback } from "react";
 
+// Google Maps에 로드할 라이브러리
 const libraries: "places"[] = ["places"];
 const mapContainerStyle = { width: "100%", height: "80vh" };
+
+// PlaceResult 타입을 직접 정의 (빌드 오류 방지용)
+type CleanPlace = {
+  name?: string;
+  geometry?: {
+    location?: {
+      lat: () => number;
+      lng: () => number;
+    };
+  };
+};
 
 export default function ExchangeMap() {
   const { isLoaded } = useLoadScript({
@@ -17,7 +29,7 @@ export default function ExchangeMap() {
   });
 
   const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 }); // 서울
-  const [places, setPlaces] = useState<google.maps.PlaceResult[]>([]);
+  const [places, setPlaces] = useState<CleanPlace[]>([]);
   const mapRef = useRef<google.maps.Map | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -37,6 +49,7 @@ export default function ExchangeMap() {
     const service = new google.maps.places.PlacesService(
       document.createElement("div")
     );
+
     service.nearbySearch(
       {
         location: pos,
@@ -45,7 +58,17 @@ export default function ExchangeMap() {
       },
       (results, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          setPlaces(results);
+          // 결과를 CleanPlace[] 형태로 가공
+          const cleanResults: CleanPlace[] = results.map((place) => ({
+            name: place.name,
+            geometry: {
+              location: {
+                lat: () => place.geometry?.location?.lat?.() ?? 0,
+                lng: () => place.geometry?.location?.lng?.() ?? 0,
+              },
+            },
+          }));
+          setPlaces(cleanResults);
         }
       }
     );
@@ -127,8 +150,8 @@ export default function ExchangeMap() {
           <Marker
             key={i}
             position={{
-              lat: place.geometry?.location?.lat() ?? 0,
-              lng: place.geometry?.location?.lng() ?? 0,
+              lat: place.geometry?.location?.lat?.() ?? 0,
+              lng: place.geometry?.location?.lng?.() ?? 0,
             }}
           />
         ))}
