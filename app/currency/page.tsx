@@ -9,7 +9,6 @@ import NumberPad from "./components/NumberPad";
 import useIsMobile from "./hooks/useIsMobile";
 import { useBaseCurrencyStore } from "./hooks/useBaseCurrencyStore";
 import PostRatesButton from "./components/PostRateButton";
-//import ExchangeMap from "./exchangeMap/ExchangeMap";
 //import { dummyData } from "@/lib/sampleData";
 
 export default function CurrencyPage() {
@@ -34,19 +33,38 @@ export default function CurrencyPage() {
   if (isLoading) return <div>불러오는 중...</div>;
   if (error) return <div>에러가 발생했습니다...</div>;
   //const data: Record<string, number> = dummyData;
+
+  //console.log("data1 : ", data);
   const rateData = data.rateData;
   const updatedDate = data.updatedDate;
 
-  const ratio = baseAmount / rateData[baseCurrency];
+  const ratio = baseAmount / rateData[baseCurrency].rate;
 
-  const changeData: Record<string, string> = {};
-  for (const [currency, rate] of Object.entries(rateData) as [
+  const changeData: Record<
     string,
-    number
+    {
+      rate: number;
+      names: { ko: string; en: string; ja: string; zh: string; es: string };
+      unit: { ko: string; en: string; ja: string; zh: string; es: string };
+    }
+  > = {};
+  for (const [currency, rateAndNamesAndUnit] of Object.entries(rateData) as [
+    string,
+    {
+      rate: number;
+      names: { ko: string; en: string; ja: string; zh: string; es: string };
+      unit: { ko: string; en: string; ja: string; zh: string; es: string };
+    }
   ][]) {
-    changeData[currency] = (rate * ratio).toFixed(3);
+    console.log("currency: ", currency);
+    console.log("rateAndNamesAndUnit: ", rateAndNamesAndUnit);
+    changeData[currency] = {
+      rate: Number((rateAndNamesAndUnit.rate * ratio).toFixed(3)),
+      names: rateAndNamesAndUnit.names,
+      unit: rateAndNamesAndUnit.unit,
+    };
   }
-  console.log("data : ", rateData);
+  console.log("data2 : ", rateData);
   console.log("changeDate : ", changeData);
 
   const currencies = Object.keys(CountryInfo);
@@ -147,7 +165,6 @@ export default function CurrencyPage() {
           setCalculatedAmt(0); // 값 반영 후 초기화
         }}
       />
-      {/* <ExchangeMap /> */}
     </main>
   );
 }

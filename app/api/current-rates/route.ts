@@ -1,3 +1,4 @@
+import { CountryInfo } from "@/lib/contryInfo";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -8,7 +9,8 @@ function delay(ms: number) {
 export async function GET() {
   try {
     const rates = await prisma.currentRate.findMany();
-    const rateData: Record<string, number> = {};
+    //const rateData: Record<string, number> = {};
+    const rateData: Record<string, object> = {};
 
     let updatedDate = new Date();
     if (rates.length > 0) {
@@ -17,8 +19,24 @@ export async function GET() {
       updatedDate = new Date("19990101");
     }
 
+    // 프로젝트 내에 있는 국가 정보에 있는것만 화면에 뿌려주자..
+    // const countryList = Object.keys(CountryInfo);
+    // for (const rate of rates) {
+    //   if (countryList.includes(rate.currency)) {
+    //     rateData[rate.currency] = rate.rate;
+    //   }
+    // }
+
+    // 프로젝트 내에 있는 국가 정보에 있는것만 화면에 뿌려주자..
+    const countryList = Object.keys(CountryInfo);
     for (const rate of rates) {
-      rateData[rate.currency] = rate.rate;
+      if (countryList.includes(rate.currency)) {
+        rateData[rate.currency] = {
+          rate: rate.rate,
+          names: CountryInfo[rate.currency].names,
+          unit: CountryInfo[rate.currency].unit,
+        };
+      }
     }
 
     console.log("조회용 data : ", rateData);

@@ -1,10 +1,25 @@
 type CountryNames = {
-  [key: string]: string;
+  ko: string;
+  en: string;
+  ja: string;
+  zh: string;
+  es: string;
 };
+
+type CurrencyUnit = {
+  ko: string;
+  en: string;
+  ja: string;
+  zh: string;
+  es: string;
+};
+
 type CountryData = {
   flag: string;
   names: CountryNames;
+  unit: CurrencyUnit;
 };
+
 export const CountryInfo: Record<string, CountryData> = {
   KRW: {
     flag: "/flags/kr.svg",
@@ -15,6 +30,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "韩国",
       es: "Corea del Sur",
     },
+    unit: { ko: "원", en: "won", ja: "ウォン", zh: "韩元", es: "won" },
   },
   USD: {
     flag: "/flags/us.svg",
@@ -25,14 +41,17 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "美国",
       es: "Estados Unidos",
     },
+    unit: { ko: "달러", en: "dollar", ja: "ドル", zh: "美元", es: "dólar" },
   },
   JPY: {
     flag: "/flags/jp.svg",
     names: { ko: "일본", en: "Japan", ja: "日本", zh: "日本", es: "Japón" },
+    unit: { ko: "엔", en: "yen", ja: "円", zh: "日元", es: "yen" },
   },
   CNY: {
     flag: "/flags/cn.svg",
     names: { ko: "중국", en: "China", ja: "中国", zh: "中国", es: "China" },
+    unit: { ko: "위안", en: "yuan", ja: "元", zh: "人民币", es: "yuan" },
   },
   VND: {
     flag: "/flags/vn.svg",
@@ -43,6 +62,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "越南",
       es: "Vietnam",
     },
+    unit: { ko: "동", en: "dong", ja: "ドン", zh: "越南盾", es: "dong" },
   },
   EUR: {
     flag: "/flags/eu.svg",
@@ -53,6 +73,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "欧盟",
       es: "Unión Europea",
     },
+    unit: { ko: "유로", en: "euro", ja: "ユーロ", zh: "欧元", es: "euro" },
   },
   GBP: {
     flag: "/flags/gb.svg",
@@ -63,6 +84,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "英国",
       es: "Reino Unido",
     },
+    unit: { ko: "파운드", en: "pound", ja: "ポンド", zh: "英镑", es: "libra" },
   },
   AUD: {
     flag: "/flags/au.svg",
@@ -72,6 +94,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "オーストラリア",
       zh: "澳大利亚",
       es: "Australia",
+    },
+    unit: {
+      ko: "호주 달러",
+      en: "Australian dollar",
+      ja: "オーストラリアドル",
+      zh: "澳元",
+      es: "dólar australiano",
     },
   },
   CAD: {
@@ -83,6 +112,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "加拿大",
       es: "Canadá",
     },
+    unit: {
+      ko: "캐나다 달러",
+      en: "Canadian dollar",
+      ja: "カナダドル",
+      zh: "加元",
+      es: "dólar canadiense",
+    },
   },
   SGD: {
     flag: "/flags/sg.svg",
@@ -92,6 +128,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "シンガポール",
       zh: "新加坡",
       es: "Singapur",
+    },
+    unit: {
+      ko: "싱가포르 달러",
+      en: "Singapore dollar",
+      ja: "シンガポールドル",
+      zh: "新元",
+      es: "dólar singapurense",
     },
   },
   THB: {
@@ -103,6 +146,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "泰国",
       es: "Tailandia",
     },
+    unit: { ko: "바트", en: "baht", ja: "バーツ", zh: "泰铢", es: "baht" },
   },
   PHP: {
     flag: "/flags/ph.svg",
@@ -113,6 +157,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "菲律宾",
       es: "Filipinas",
     },
+    unit: { ko: "페소", en: "peso", ja: "ペソ", zh: "比索", es: "peso" },
   },
   IDR: {
     flag: "/flags/id.svg",
@@ -122,6 +167,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "インドネシア",
       zh: "印度尼西亚",
       es: "Indonesia",
+    },
+    unit: {
+      ko: "루피아",
+      en: "rupiah",
+      ja: "ルピア",
+      zh: "印尼盾",
+      es: "rupia",
     },
   },
   MYR: {
@@ -133,6 +185,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "马来西亚",
       es: "Malasia",
     },
+    unit: {
+      ko: "링깃",
+      en: "ringgit",
+      ja: "リンギット",
+      zh: "马币",
+      es: "ringgit",
+    },
   },
   HKD: {
     flag: "/flags/hk.svg",
@@ -143,15 +202,23 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "香港",
       es: "Hong Kong",
     },
+    unit: {
+      ko: "홍콩 달러",
+      en: "Hong Kong dollar",
+      ja: "香港ドル",
+      zh: "港元",
+      es: "dólar de Hong Kong",
+    },
   },
   TWD: {
     flag: "/flags/tw.svg",
-    names: {
-      ko: "대만",
-      en: "Taiwan",
-      ja: "台湾",
-      zh: "台湾",
-      es: "Taiwán",
+    names: { ko: "대만", en: "Taiwan", ja: "台湾", zh: "台湾", es: "Taiwán" },
+    unit: {
+      ko: "신타이완 달러",
+      en: "New Taiwan dollar",
+      ja: "ニュー台湾ドル",
+      zh: "新台币",
+      es: "nuevo dólar taiwanés",
     },
   },
   NZD: {
@@ -163,6 +230,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "新西兰",
       es: "Nueva Zelanda",
     },
+    unit: {
+      ko: "뉴질랜드 달러",
+      en: "New Zealand dollar",
+      ja: "ニュージーランドドル",
+      zh: "纽元",
+      es: "dólar neozelandés",
+    },
   },
   RUB: {
     flag: "/flags/ru.svg",
@@ -173,16 +247,12 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "俄罗斯",
       es: "Rusia",
     },
+    unit: { ko: "루블", en: "ruble", ja: "ルーブル", zh: "卢布", es: "rublo" },
   },
   INR: {
     flag: "/flags/in.svg",
-    names: {
-      ko: "인도",
-      en: "India",
-      ja: "インド",
-      zh: "印度",
-      es: "India",
-    },
+    names: { ko: "인도", en: "India", ja: "インド", zh: "印度", es: "India" },
+    unit: { ko: "루피", en: "rupee", ja: "ルピー", zh: "卢比", es: "rupia" },
   },
   BRL: {
     flag: "/flags/br.svg",
@@ -193,6 +263,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "巴西",
       es: "Brasil",
     },
+    unit: { ko: "헤알", en: "real", ja: "レアル", zh: "雷亚尔", es: "real" },
   },
   MXN: {
     flag: "/flags/mx.svg",
@@ -203,6 +274,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "墨西哥",
       es: "México",
     },
+    unit: { ko: "페소", en: "peso", ja: "ペソ", zh: "比索", es: "peso" },
   },
   TRY: {
     flag: "/flags/tr.svg",
@@ -213,6 +285,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "土耳其",
       es: "Turquía",
     },
+    unit: { ko: "리라", en: "lira", ja: "リラ", zh: "里拉", es: "lira" },
   },
   SAR: {
     flag: "/flags/sa.svg",
@@ -223,6 +296,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "沙特阿拉伯",
       es: "Arabia Saudita",
     },
+    unit: { ko: "리얄", en: "riyal", ja: "リヤル", zh: "里亚尔", es: "riyal" },
   },
   AED: {
     flag: "/flags/ae.svg",
@@ -232,6 +306,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "アラブ首長国連邦",
       zh: "阿联酋",
       es: "Emiratos Árabes Unidos",
+    },
+    unit: {
+      ko: "디르함",
+      en: "dirham",
+      ja: "ディルハム",
+      zh: "迪拉姆",
+      es: "dírham",
     },
   },
   ZAR: {
@@ -243,6 +324,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "南非",
       es: "Sudáfrica",
     },
+    unit: { ko: "랜드", en: "rand", ja: "ランド", zh: "兰特", es: "rand" },
   },
   CHF: {
     flag: "/flags/ch.svg",
@@ -253,6 +335,7 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "瑞士",
       es: "Suiza",
     },
+    unit: { ko: "프랑", en: "franc", ja: "フラン", zh: "法郎", es: "franco" },
   },
   SEK: {
     flag: "/flags/se.svg",
@@ -262,6 +345,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "スウェーデン",
       zh: "瑞典",
       es: "Suecia",
+    },
+    unit: {
+      ko: "크로나",
+      en: "krona",
+      ja: "クローナ",
+      zh: "克朗",
+      es: "corona",
     },
   },
   NOK: {
@@ -273,6 +363,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "挪威",
       es: "Noruega",
     },
+    unit: {
+      ko: "크로네",
+      en: "krone",
+      ja: "クローネ",
+      zh: "克朗",
+      es: "corona noruega",
+    },
   },
   DKK: {
     flag: "/flags/dk.svg",
@@ -282,6 +379,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "デンマーク",
       zh: "丹麦",
       es: "Dinamarca",
+    },
+    unit: {
+      ko: "크로네",
+      en: "krone",
+      ja: "クローネ",
+      zh: "克朗",
+      es: "corona danesa",
     },
   },
   PLN: {
@@ -293,6 +397,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "波兰",
       es: "Polonia",
     },
+    unit: {
+      ko: "즈워티",
+      en: "zloty",
+      ja: "ズウォティ",
+      zh: "兹罗提",
+      es: "esloti",
+    },
   },
   CZK: {
     flag: "/flags/cz.svg",
@@ -302,6 +413,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "チェコ",
       zh: "捷克",
       es: "Chequia",
+    },
+    unit: {
+      ko: "코루나",
+      en: "koruna",
+      ja: "コルナ",
+      zh: "克朗",
+      es: "corona checa",
     },
   },
   HUF: {
@@ -313,6 +431,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "匈牙利",
       es: "Hungría",
     },
+    unit: {
+      ko: "포린트",
+      en: "forint",
+      ja: "フォリント",
+      zh: "福林",
+      es: "forinto",
+    },
   },
   ILS: {
     flag: "/flags/il.svg",
@@ -322,6 +447,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "イスラエル",
       zh: "以色列",
       es: "Israel",
+    },
+    unit: {
+      ko: "셰켈",
+      en: "shekel",
+      ja: "シェケル",
+      zh: "谢克尔",
+      es: "shéquel",
     },
   },
   EGP: {
@@ -333,6 +465,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "埃及",
       es: "Egipto",
     },
+    unit: {
+      ko: "파운드",
+      en: "pound",
+      ja: "ポンド",
+      zh: "镑",
+      es: "libra egipcia",
+    },
   },
   ARS: {
     flag: "/flags/ar.svg",
@@ -343,10 +482,18 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "阿根廷",
       es: "Argentina",
     },
+    unit: { ko: "페소", en: "peso", ja: "ペソ", zh: "比索", es: "peso" },
   },
   CLP: {
     flag: "/flags/cl.svg",
     names: { ko: "칠레", en: "Chile", ja: "チリ", zh: "智利", es: "Chile" },
+    unit: {
+      ko: "페소",
+      en: "peso",
+      ja: "ペソ",
+      zh: "比索",
+      es: "peso chileno",
+    },
   },
   COP: {
     flag: "/flags/co.svg",
@@ -356,6 +503,13 @@ export const CountryInfo: Record<string, CountryData> = {
       ja: "コロンビア",
       zh: "哥伦比亚",
       es: "Colombia",
+    },
+    unit: {
+      ko: "페소",
+      en: "peso",
+      ja: "ペソ",
+      zh: "比索",
+      es: "peso colombiano",
     },
   },
   PKR: {
@@ -367,6 +521,13 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "巴基斯坦",
       es: "Pakistán",
     },
+    unit: {
+      ko: "루피",
+      en: "rupee",
+      ja: "ルピー",
+      zh: "卢比",
+      es: "rupia pakistaní",
+    },
   },
   BDT: {
     flag: "/flags/bd.svg",
@@ -377,5 +538,6 @@ export const CountryInfo: Record<string, CountryData> = {
       zh: "孟加拉国",
       es: "Bangladés",
     },
+    unit: { ko: "타카", en: "taka", ja: "タカ", zh: "塔卡", es: "taka" },
   },
 };

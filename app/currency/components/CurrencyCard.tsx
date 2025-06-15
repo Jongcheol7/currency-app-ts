@@ -13,7 +13,14 @@ type Props = {
   currency: string;
   baseAmount: number;
   setBaseAmount: (value: number) => void;
-  changeData: Record<string, string>;
+  changeData: Record<
+    string,
+    {
+      rate: number;
+      names: { ko: string; en: string; ja: string; zh: string; es: string };
+      unit: { ko: string; en: string; ja: string; zh: string; es: string };
+    }
+  >;
   focusedCard: number;
   setFocusedCard: (value: number) => void;
   calculatedAmt: number;
@@ -36,12 +43,12 @@ export default function CurrencyCard({
   isMobile,
 }: Props) {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
-  const { flag, names } = CountryInfo[currency];
-  const filteredName = names["ko"];
+  const { flag } = CountryInfo[currency];
+  // const filteredName = names["ko"];
 
   return (
     <Card className={baseCurrency === currency ? "bg-blue-200" : ""}>
-      <CardHeader className="h-[0px]">
+      <CardHeader className="h-[5px]">
         <CardTitle className="flex items-center gap-2 text-base h-[0px]">
           <Image
             src={flag}
@@ -62,13 +69,15 @@ export default function CurrencyCard({
             >
               {currencies.map((currency) => (
                 <option key={currency} value={currency}>
-                  {currency}
+                  {changeData[currency].names.ko} ({currency})
                 </option>
               ))}
             </select>
-            <p>{filteredName}</p>
           </div>
         </CardTitle>
+        <p className="ml-13 font-bold text-xs">
+          {changeData[currency].unit.ko}
+        </p>
       </CardHeader>
       <CardContent className="h-[25px] flex items-center gap-1">
         <Input
@@ -81,7 +90,7 @@ export default function CurrencyCard({
               ? cardNum === focusedCard && calculatedAmt !== 0
                 ? calculatedAmt.toLocaleString("ko-KR")
                 : baseAmount.toLocaleString("ko-KR")
-              : Number(changeData[currency]).toLocaleString("ko-KR")
+              : changeData[currency].rate.toLocaleString("ko-KR")
           }
           onChange={(e) => {
             const raw = e.target.value.replace(/,/g, ""); // 쉼표 제거
