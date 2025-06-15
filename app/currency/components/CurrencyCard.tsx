@@ -18,6 +18,7 @@ type Props = {
   setFocusedCard: (value: number) => void;
   calculatedAmt: number;
   setCalculatedAmt: (value: number) => void;
+  isMobile: boolean;
 };
 
 export default function CurrencyCard({
@@ -32,21 +33,11 @@ export default function CurrencyCard({
   setFocusedCard,
   calculatedAmt,
   setCalculatedAmt,
+  isMobile,
 }: Props) {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
-
   const { flag, names } = CountryInfo[currency];
-
   const filteredName = names["ko"];
-
-  // console.log("cardNum : ", cardNum);
-  // console.log("currency : ", currency);
-  // console.log("baseCurrency : ", baseCurrency);
-  // console.log("changeData : ", changeData);
-  // console.log("baseAmount : ", baseAmount);
-  // console.log("focusedCard : ", focusedCard);
-  // console.log("calculatedAmt : ", calculatedAmt);
-  // console.log("setCalculatedAmt type:", typeof setCalculatedAmt); // function이어야 정상
 
   return (
     <Card className={baseCurrency === currency ? "bg-blue-200" : ""}>
@@ -84,6 +75,7 @@ export default function CurrencyCard({
           type="text"
           inputMode="numeric"
           pattern="[0-9]*"
+          readOnly={isMobile}
           value={
             currency === baseCurrency
               ? cardNum === focusedCard && calculatedAmt !== 0

@@ -9,7 +9,7 @@ export default function NumberPad({ setCalculatedAmt }: Props) {
   return (
     <div>
       <input
-        className="bg-white w-full rounded-md p-1 px-2 mb-2"
+        className="bg-white font-bold w-full rounded-md p-1 px-2 mb-2"
         value={calc}
         readOnly
       />
@@ -24,13 +24,13 @@ export default function NumberPad({ setCalculatedAmt }: Props) {
           className="p-3 text-blue-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
           onClick={() => setCalc(calc + "(")}
         >
-          （
+          (
         </button>
         <button
           className="p-3 text-blue-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
           onClick={() => setCalc(calc + ")")}
         >
-          ）
+          )
         </button>
         <button
           className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
@@ -131,9 +131,13 @@ export default function NumberPad({ setCalculatedAmt }: Props) {
         <button
           className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
           onClick={() => {
-            const result = evaluate(calc.replace(/X/g, "*"));
-            setCalc("");
-            setCalculatedAmt(result);
+            try {
+              const result = evaluate(calc.replace(/X/g, "*"));
+              setCalc("");
+              setCalculatedAmt(result);
+            } catch (err) {
+              alert("잘못된 수식입니다.");
+            }
           }}
         >
           =

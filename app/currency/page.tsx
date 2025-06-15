@@ -9,6 +9,7 @@ import NumberPad from "./components/NumberPad";
 import useIsMobile from "./hooks/useIsMobile";
 import { useBaseCurrencyStore } from "./hooks/useBaseCurrencyStore";
 import PostRatesButton from "./components/PostRateButton";
+//import ExchangeMap from "./exchangeMap/ExchangeMap";
 //import { dummyData } from "@/lib/sampleData";
 
 export default function CurrencyPage() {
@@ -82,10 +83,11 @@ export default function CurrencyPage() {
           setFocusedCard={setFocusedCard}
           calculatedAmt={calculatedAmt}
           setCalculatedAmt={setCalculatedAmt}
+          isMobile={isMobile}
         />
         <CurrencyCard
           cardNum={2}
-          currencies={Object.keys(rateData)}
+          currencies={currencies}
           setCurrency={setCurrency2}
           currency={currency2}
           baseAmount={baseAmount}
@@ -95,10 +97,11 @@ export default function CurrencyPage() {
           setFocusedCard={setFocusedCard}
           calculatedAmt={calculatedAmt}
           setCalculatedAmt={setCalculatedAmt}
+          isMobile={isMobile}
         />
         <CurrencyCard
           cardNum={3}
-          currencies={Object.keys(rateData)}
+          currencies={currencies}
           setCurrency={setCurrency3}
           currency={currency3}
           baseAmount={baseAmount}
@@ -108,11 +111,12 @@ export default function CurrencyPage() {
           setFocusedCard={setFocusedCard}
           calculatedAmt={calculatedAmt}
           setCalculatedAmt={setCalculatedAmt}
+          isMobile={isMobile}
         />
         {!isMobile && (
           <CurrencyCard
             cardNum={4}
-            currencies={Object.keys(rateData)}
+            currencies={currencies}
             setCurrency={setCurrency4}
             currency={currency4}
             baseAmount={baseAmount}
@@ -122,6 +126,7 @@ export default function CurrencyPage() {
             setFocusedCard={setFocusedCard}
             calculatedAmt={calculatedAmt}
             setCalculatedAmt={setCalculatedAmt}
+            isMobile={isMobile}
           />
         )}
       </div>
@@ -142,6 +147,7 @@ export default function CurrencyPage() {
           setCalculatedAmt(0); // 값 반영 후 초기화
         }}
       />
+      {/* <ExchangeMap /> */}
     </main>
   );
 }
