@@ -7,11 +7,9 @@ import {
 } from "@react-google-maps/api";
 import { useEffect, useState, useRef, useCallback } from "react";
 
-// Google Maps에 로드할 라이브러리
 const libraries: "places"[] = ["places"];
 const mapContainerStyle = { width: "100%", height: "80vh" };
 
-// PlaceResult 타입을 직접 정의 (빌드 오류 방지용)
 type CleanPlace = {
   name?: string;
   geometry?: {
@@ -28,8 +26,13 @@ export default function ExchangeMap() {
     libraries,
   });
 
-  const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 }); // 서울
+  const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 });
   const [places, setPlaces] = useState<CleanPlace[]>([]);
+  const [currentLocation, setCurrentLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
   const mapRef = useRef<google.maps.Map | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -49,7 +52,6 @@ export default function ExchangeMap() {
     const service = new google.maps.places.PlacesService(
       document.createElement("div")
     );
-
     service.nearbySearch(
       {
         location: pos,
@@ -58,7 +60,6 @@ export default function ExchangeMap() {
       },
       (results, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          // 결과를 CleanPlace[] 형태로 가공
           const cleanResults: CleanPlace[] = results.map((place) => ({
             name: place.name,
             geometry: {
@@ -79,6 +80,18 @@ export default function ExchangeMap() {
     const center = mapRef.current.getCenter();
     if (!center) return;
     searchNearby({ lat: center.lat(), lng: center.lng() });
+  };
+
+  const handleFindMe = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      setCurrentLocation(pos);
+      setCenter(pos);
+      searchNearby(pos);
+    });
   };
 
   const handlePlaceChanged = () => {
@@ -102,6 +115,7 @@ export default function ExchangeMap() {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
+      setCurrentLocation(pos);
       searchNearby(pos);
     });
   }, [isLoaded, searchNearby]);
@@ -124,12 +138,20 @@ export default function ExchangeMap() {
         </Autocomplete>
       </div>
 
-      {/* 현재 위치 재검색 버튼 */}
+      {/* 현재 지도 위치로 재검색 */}
       <button
         onClick={handleRecenter}
         className="absolute top-4 right-4 z-10 bg-white border px-3 py-1 rounded shadow hover:bg-gray-100 transition"
       >
         현재 지도 위치로 재검색
+      </button>
+
+      {/* 내 위치 찾기 */}
+      <button
+        onClick={handleFindMe}
+        className="absolute bottom-4 left-4 z-10 bg-blue-500 text-white px-3 py-2 rounded-full shadow-lg hover:bg-blue-600"
+      >
+        내 위치 찾기
       </button>
 
       {/* 지도 */}
@@ -146,6 +168,22 @@ export default function ExchangeMap() {
           scrollwheel: true,
         }}
       >
+        {/* 내 위치 마커 */}
+        {currentLocation && (
+          <Marker
+            position={currentLocation}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: "#4285F4",
+              fillOpacity: 1,
+              strokeWeight: 2,
+              strokeColor: "white",
+            }}
+          />
+        )}
+
+        {/* 환전소 마커 */}
         {places.map((place, i) => (
           <Marker
             key={i}
