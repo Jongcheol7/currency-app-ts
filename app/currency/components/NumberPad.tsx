@@ -136,6 +136,7 @@ export default function NumberPad({ setCalculatedAmt }: Props) {
               setCalc("");
               setCalculatedAmt(result);
             } catch (err) {
+              console.error(err);
               alert("잘못된 수식입니다.");
             }
           }}
