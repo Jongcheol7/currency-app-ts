@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { useLangueStore } from "@/lib/store/useLangueStore";
 import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
-import { useLangueStore } from "../hooks/useLangueStore";
 import { useState } from "react";
 
 type Props = {

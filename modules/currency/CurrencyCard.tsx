@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { CountryInfo } from "@/lib/contryInfo";
-import { useBaseCurrencyStore } from "../hooks/useBaseCurrencyStore";
-import { useLangueStore } from "../hooks/useLangueStore";
+import { useBaseCurrencyStore } from "@/lib/store/useBaseCurrencyStore";
+import { useLangueStore } from "@/lib/store/useLangueStore";
 //import { fetchExchangeChartData } from "@/lib/api";
 
 type Props = {

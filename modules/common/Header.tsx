@@ -1,8 +1,8 @@
 "use client";
-import LanguegePopup from "@/app/currency/components/LanguagePopup";
 import { Globe } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import LanguegePopup from "../currency/LanguagePopup";
 
 export default function Header() {
   const [isLanPopShow, setIsLanPopShow] = useState(false);

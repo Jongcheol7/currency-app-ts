@@ -1,11 +1,11 @@
-import Header from "@/components/common/Header";
-import CurrencyPage from "./currency/page";
+import Header from "@/modules/common/Header";
+import Page from "./(currency)/currency/page";
 
 export default function Home() {
   return (
     <div>
       <Header />
-      <CurrencyPage />
+      <Page />
     </div>
   );
 }

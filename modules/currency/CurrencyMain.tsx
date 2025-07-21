@@ -2,16 +2,17 @@
 //import { useExchangeRates } from "./hooks/useExchangeRates";
 import { useEffect, useState } from "react";
 //import { dummyData } from "@/lib/sampleData";
-import CurrencyCard from "./components/CurrencyCard";
-import { useExchangeRates } from "./hooks/useExchangeRates";
 import { CountryInfo } from "@/lib/contryInfo";
-import NumberPad from "./components/NumberPad";
-import useIsMobile from "./hooks/useIsMobile";
-import { useBaseCurrencyStore } from "./hooks/useBaseCurrencyStore";
-import PostRatesButton from "./components/PostRateButton";
+import { useBaseCurrencyStore } from "@/lib/store/useBaseCurrencyStore";
+import useIsMobile from "@/hooks/useIsMobile";
+import { useExchangeRates } from "@/hooks/useExchangeRates";
+import PostRatesButton from "./PostRateButton";
+import CurrencyCard from "./CurrencyCard";
+import NumberPad from "./NumberPad";
+
 //import { dummyData } from "@/lib/sampleData";
 
-export default function CurrencyPage() {
+export default function CurrencyMain() {
   const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
   useEffect(() => {
     setBaseCurrency("KRW");

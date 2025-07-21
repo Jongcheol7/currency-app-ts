@@ -1,8 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import ExchangeMap from "./ExchangeMap";
 import { Map } from "lucide-react";
-export default function ExchangeMapPage() {
+import MapContent from "./MapContent";
+export default function MapMain() {
   const router = useRouter();
   return (
     <div className="">
@@ -19,7 +19,7 @@ export default function ExchangeMapPage() {
         </div>
         <p></p>
       </div>
-      <ExchangeMap />
+      <MapContent />
     </div>
   );
 }
