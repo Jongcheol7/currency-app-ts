@@ -1,116 +1,81 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
+"use client";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CountryInfo } from "@/lib/contryInfo";
-import { useBaseCurrencyStore } from "@/lib/store/useBaseCurrencyStore";
 import { useLangueStore } from "@/lib/store/useLangueStore";
-//import { fetchExchangeChartData } from "@/lib/api";
+import Image from "next/image";
 
 type Props = {
-  cardNum: number;
+  cardId: number;
   currencies: string[];
-  setCurrency: (value: string) => void;
-  currency: string;
-  baseAmount: number;
-  setBaseAmount: (value: number) => void;
-  changeData: Record<
-    string,
-    {
-      rate: number;
-      names: { ko: string; en: string; ja: string; zh: string; es: string };
-      unit: { ko: string; en: string; ja: string; zh: string; es: string };
-    }
-  >;
-  focusedCard: number;
-  setFocusedCard: (value: number) => void;
-  calculatedAmt: number;
-  setCalculatedAmt: (value: number) => void;
-  isMobile: boolean;
+  selectedCountry: string[];
+  setSelectedCountry: (value: string[]) => void;
+  focusCard: number;
+  setFocusCard: (value: number) => void;
+  prices: number[];
 };
 
 type LangCode = "ko" | "en" | "ja" | "zh" | "es";
 
 export default function CurrencyCard({
-  cardNum,
+  cardId,
   currencies,
-  setCurrency,
-  currency,
-  baseAmount,
-  setBaseAmount,
-  changeData,
-  focusedCard,
-  setFocusedCard,
-  calculatedAmt,
-  setCalculatedAmt,
-  isMobile,
+  selectedCountry,
+  setSelectedCountry,
+  focusCard,
+  setFocusCard,
+  prices,
 }: Props) {
-  const { baseCurrency, setBaseCurrency } = useBaseCurrencyStore();
-  const { flag } = CountryInfo[currency];
-
+  const { flag } = CountryInfo[selectedCountry[cardId]];
   const { language: settingLanguage } = useLangueStore();
   const lang = settingLanguage as LangCode;
 
   return (
-    <Card className={baseCurrency === currency ? "bg-blue-200" : ""}>
-      <CardHeader className="h-[5px]">
-        <CardTitle className="flex items-center gap-2 text-base h-[0px]">
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+        console.log("카드 클릭됨:", cardId);
+        setFocusCard(cardId);
+      }}
+    >
+      <Card
+        className={`transition-all cursor-pointer border-2 ${
+          focusCard === cardId
+            ? "border-amber-200 bg-amber-100"
+            : "border-transparent"
+        }`}
+      >
+        <CardHeader className="flex items-center gap-2">
           <Image
             src={flag}
             width={40}
             height={30}
-            alt={currency}
+            alt={"test"}
             className="border-2"
           />
-          <div className="flex items-center">
+          <div className="flex-1">
             <select
-              className="pb-1 mr-4"
-              value={currency}
+              className="pb-1 mr-4 border rounded w-full"
+              value={selectedCountry[cardId]}
               onChange={(e) => {
-                const selected = e.target.value;
-                setCurrency(selected);
-                setBaseCurrency(selected);
+                const newSelected = [...selectedCountry];
+                newSelected[cardId] = e.currentTarget.value;
+                setSelectedCountry(newSelected);
               }}
             >
               {currencies.map((currency) => (
                 <option key={currency} value={currency}>
-                  {changeData[currency].names[lang]} ({currency})
+                  {CountryInfo[currency].names[lang]} ({currency})
                 </option>
               ))}
             </select>
           </div>
-        </CardTitle>
-        <p className="ml-13 font-bold text-xs">
-          {changeData[currency].unit[lang]}
-        </p>
-      </CardHeader>
-      <CardContent className="h-[25px] flex items-center gap-1">
-        <Input
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          readOnly={isMobile}
-          value={
-            currency === baseCurrency
-              ? cardNum === focusedCard && calculatedAmt !== 0
-                ? calculatedAmt.toLocaleString("ko-KR")
-                : baseAmount.toLocaleString("ko-KR")
-              : changeData[currency].rate.toLocaleString("ko-KR")
-          }
-          onChange={(e) => {
-            const raw = e.target.value.replace(/,/g, ""); // 쉼표 제거
-            const parsed = Number(raw);
-            if (!isNaN(parsed)) {
-              setCurrency(currency);
-              setBaseCurrency(currency);
-              setBaseAmount(parsed);
-            }
-          }}
-          onClick={() => {
-            setFocusedCard(cardNum);
-            setCalculatedAmt(0);
-          }}
-        />
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          <p className="border p-1 rounded text-right font-bold">
+            {prices[cardId].toLocaleString()}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

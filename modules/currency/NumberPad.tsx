@@ -1,148 +1,100 @@
-import { evaluate } from "mathjs";
-import { useState } from "react";
-
 type Props = {
-  setCalculatedAmt: (val: number) => void;
+  setNumpad: React.Dispatch<React.SetStateAction<string>>;
 };
-export default function NumberPad({ setCalculatedAmt }: Props) {
-  const [calc, setCalc] = useState("");
+
+export default function NumberPad({ setNumpad }: Props) {
   return (
-    <div>
-      <input
-        className="bg-white font-bold w-full rounded-md p-1 px-2 mb-2"
-        value={calc}
-        readOnly
-      />
-      <div className="grid grid-cols-4 gap-2">
-        <button
-          className="p-3 text-red-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc("")}
-        >
-          C
-        </button>
-        <button
-          className="p-3 text-blue-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "(")}
-        >
-          (
-        </button>
-        <button
-          className="p-3 text-blue-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + ")")}
-        >
-          )
-        </button>
-        <button
-          className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "/")}
-        >
-          /
-        </button>
+    <div className="mt-2">
+      <div className="grid grid-cols-3 gap-2">
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "7")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "7" : prev + "7"))}
         >
           7
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "8")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "8" : prev + "8"))}
         >
           8
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "9")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "9" : prev + "9"))}
         >
           9
         </button>
-        <button
-          className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "X")}
-        >
-          ×
-        </button>
+
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "4")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "4" : prev + "4"))}
         >
           4
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "5")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "5" : prev + "5"))}
         >
           5
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "6")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "6" : prev + "6"))}
         >
           6
         </button>
-        <button
-          className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "-")}
-        >
-          -
-        </button>
+
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "1")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "1" : prev + "1"))}
         >
           1
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "2")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "2" : prev + "2"))}
         >
           2
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "3")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "3" : prev + "3"))}
         >
           3
         </button>
-        <button
-          className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "+")}
-        >
-          +
-        </button>
+
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + "0")}
+          onClick={() => setNumpad((prev) => (prev === "0" ? "0" : prev + "0"))}
         >
           0
         </button>
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc + ".")}
+          onClick={() =>
+            setNumpad((prev) => (prev.includes(".") ? prev : prev + "."))
+          }
         >
           .
         </button>
-        <button
-          className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => setCalc(calc.substring(0, calc.length - 1))}
-        >
-          ←
-        </button>
-        <button
-          className="p-3 text-green-600 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-          onClick={() => {
-            try {
-              const result = evaluate(calc.replace(/X/g, "*"));
-              setCalc("");
-              setCalculatedAmt(result);
-            } catch (err) {
-              console.error(err);
-              alert("잘못된 수식입니다.");
+
+        <div className="flex gap-1">
+          <button
+            className="w-full p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
+            onClick={() =>
+              setNumpad((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)))
             }
-          }}
-        >
-          =
-        </button>
+          >
+            ←
+          </button>
+
+          <button
+            className="w-full p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
+            onClick={() => setNumpad("0")}
+          >
+            C
+          </button>
+        </div>
       </div>
     </div>
   );
