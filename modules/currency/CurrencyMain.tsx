@@ -47,7 +47,7 @@ export default function CurrencyMain() {
   return (
     <div>
       <CurrencyHeader updatedDate={data.updatedDate} />
-      <div className="mt-2 grid grid-cols-2 gap-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <CurrencyCard
           cardId={0}
           currencies={currencies}

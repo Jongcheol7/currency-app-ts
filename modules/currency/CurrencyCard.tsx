@@ -33,12 +33,11 @@ export default function CurrencyCard({
     <div
       onClick={(e) => {
         e.stopPropagation();
-        console.log("카드 클릭됨:", cardId);
         setFocusCard(cardId);
       }}
     >
       <Card
-        className={`transition-all cursor-pointer border-2 ${
+        className={`transition-all cursor-pointer border-2  ${
           focusCard === cardId
             ? "border-amber-200 bg-amber-100"
             : "border-transparent"
@@ -52,7 +51,7 @@ export default function CurrencyCard({
             alt={"test"}
             className="border-2"
           />
-          <div className="flex-1">
+          <div className="flex-1  min-w-0">
             <select
               className="pb-1 mr-4 border rounded w-full"
               value={selectedCountry[cardId]}
