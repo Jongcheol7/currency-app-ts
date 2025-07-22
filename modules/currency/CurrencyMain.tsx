@@ -5,6 +5,7 @@ import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
 import { useEffect, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function CurrencyMain() {
   const currencies = Object.keys(CountryInfo);
@@ -18,6 +19,7 @@ export default function CurrencyMain() {
   const [numPad, setNumpad] = useState("0");
   const [focusCard, setFocusCard] = useState(0);
   const { data, isLoading, error } = useExchangeRates();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!data || !data.rateData) return;
@@ -75,15 +77,17 @@ export default function CurrencyMain() {
           setFocusCard={setFocusCard}
           prices={prices}
         />
-        <CurrencyCard
-          cardId={3}
-          currencies={currencies}
-          selectedCountry={selectedCountry}
-          setSelectedCountry={setSelectedCountry}
-          focusCard={focusCard}
-          setFocusCard={setFocusCard}
-          prices={prices}
-        />
+        {!isMobile && (
+          <CurrencyCard
+            cardId={3}
+            currencies={currencies}
+            selectedCountry={selectedCountry}
+            setSelectedCountry={setSelectedCountry}
+            focusCard={focusCard}
+            setFocusCard={setFocusCard}
+            prices={prices}
+          />
+        )}
       </div>
       <NumberPad setNumpad={setNumpad} />
     </div>
