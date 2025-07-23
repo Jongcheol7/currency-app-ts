@@ -5,7 +5,7 @@ import MapContent from "./MapContent";
 export default function MapMain() {
   const router = useRouter();
   return (
-    <div className="">
+    <div>
       <div className="relative flex justify-between items-center">
         <p
           className="py-2 ml-2 my-2 font-bold hover:text-blue-500"

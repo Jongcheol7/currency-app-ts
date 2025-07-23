@@ -17,10 +17,7 @@ export default function Header() {
         <p className="absolute left-1/2 -translate-x-1/2 transform text-2xl font-bold">
           환율 계산기
         </p>
-        <Link
-          className="text-md font-bold hover:text-blue-500"
-          href={"/currency/exchangeMap"}
-        >
+        <Link className="text-md font-bold hover:text-blue-500" href={"/map"}>
           환전소
         </Link>
       </div>
