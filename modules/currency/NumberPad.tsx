@@ -4,7 +4,7 @@ type Props = {
 
 export default function NumberPad({ setNumpad }: Props) {
   return (
-    <div className="mt-2">
+    <div className="mt-4">
       <div className="grid grid-cols-3 gap-2">
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"

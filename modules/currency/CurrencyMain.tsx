@@ -47,9 +47,9 @@ export default function CurrencyMain() {
   if (error) return <div>에러가 발생했습니다...</div>;
 
   return (
-    <div>
+    <div className="flex flex-col justify-between">
       <CurrencyHeader updatedDate={data.updatedDate} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
         <CurrencyCard
           cardId={0}
           currencies={currencies}
