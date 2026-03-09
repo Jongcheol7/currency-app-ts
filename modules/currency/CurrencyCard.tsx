@@ -66,8 +66,8 @@ export default function CurrencyCard({
             className="border shrink-0"
           />
           <Select value={currencyCode} onValueChange={handleCurrencyChange}>
-            <SelectTrigger size="sm" className="w-[140px] shrink-0 text-xs">
-              <SelectValue />
+            <SelectTrigger size="sm" className="w-[76px] shrink-0 text-xs">
+              <SelectValue>{currencyCode}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {currencies.map((currency) => (

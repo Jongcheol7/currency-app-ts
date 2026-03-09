@@ -24,12 +24,18 @@ export default function CurrencyMain() {
   const freshInputRef = useRef(false);
 
   // 포커스 변경 후 첫 숫자 입력 시 기존 값을 지우고 새로 시작하는 래퍼
+  const MAX_LENGTH = 15;
+
   const numpadInput = useCallback((updater: (prev: string) => string) => {
     if (freshInputRef.current) {
       freshInputRef.current = false;
-      setNumpad(() => updater("0"));
+      const result = updater("0");
+      if (result.replace(".", "").length <= MAX_LENGTH) setNumpad(result);
     } else {
-      setNumpad((prev) => updater(prev));
+      setNumpad((prev) => {
+        const result = updater(prev);
+        return result.replace(".", "").length <= MAX_LENGTH ? result : prev;
+      });
     }
   }, []);
 
