@@ -28,7 +28,7 @@ export default function CurrencyMain() {
     (updater: (prev: string) => string) => {
       if (freshInputRef.current) {
         freshInputRef.current = false;
-        setNumpad((prev) => updater("0"));
+        setNumpad(() => updater("0"));
       } else {
         setNumpad((prev) => updater(prev));
       }
