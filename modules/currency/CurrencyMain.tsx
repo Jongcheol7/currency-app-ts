@@ -5,23 +5,49 @@ import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
 import { useEffect, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
-import useIsMobile from "@/hooks/useIsMobile";
+
+type CardCount = 2 | 4 | 6;
+const DEFAULT_CURRENCIES = ["KRW", "USD", "VND", "JPY", "EUR", "CNY"];
 
 export default function CurrencyMain() {
   const currencies = Object.keys(CountryInfo);
-  const [selectedCountry, setSelectedCountry] = useState([
-    "KRW",
-    "USD",
-    "VND",
-    "JPY",
-  ]);
-  const [prices, setPrices] = useState([0, 0, 0, 0]);
+  const [cardCount, setCardCount] = useState<CardCount>(4);
+  const [selectedCountry, setSelectedCountry] = useState(
+    DEFAULT_CURRENCIES.slice(0, 4)
+  );
+  const [prices, setPrices] = useState(Array(4).fill(0));
   const [numPad, setNumpad] = useState("0");
   const [focusCard, setFocusCard] = useState(0);
   const { data, isLoading, error } = useExchangeRates();
-  const isMobile = useIsMobile();
 
   const skipRecalcRef = useRef(false);
+
+  const handleCardCountChange = (count: CardCount) => {
+    if (count === cardCount) return;
+
+    const prevCount = selectedCountry.length;
+    let newCountries: string[];
+
+    if (count > prevCount) {
+      // 늘어난 만큼 기본 통화에서 아직 선택 안 된 것으로 채움
+      const remaining = DEFAULT_CURRENCIES.filter(
+        (c) => !selectedCountry.includes(c)
+      );
+      const extra = remaining.slice(0, count - prevCount);
+      newCountries = [...selectedCountry, ...extra];
+    } else {
+      newCountries = selectedCountry.slice(0, count);
+    }
+
+    // 포커스가 범위 밖이면 0으로 리셋
+    const newFocus = focusCard >= count ? 0 : focusCard;
+
+    setCardCount(count);
+    setSelectedCountry(newCountries);
+    setPrices(Array(count).fill(0));
+    setNumpad("0");
+    setFocusCard(newFocus);
+  };
 
   const handleFocusChange = (cardId: number) => {
     if (cardId === focusCard) return;
@@ -62,23 +88,24 @@ export default function CurrencyMain() {
 
   return (
     <div className="flex flex-col justify-between">
-      <CurrencyHeader updatedDate={data.updatedDate} />
+      <CurrencyHeader
+        updatedDate={data.updatedDate}
+        cardCount={cardCount}
+        onCardCountChange={handleCardCountChange}
+      />
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {selectedCountry.map((_, index) => {
-          if (isMobile && index >= 3) return null;
-          return (
-            <CurrencyCard
-              key={index}
-              cardId={index}
-              currencies={currencies}
-              selectedCountry={selectedCountry}
-              setSelectedCountry={setSelectedCountry}
-              focusCard={focusCard}
-              setFocusCard={handleFocusChange}
-              prices={prices}
-            />
-          );
-        })}
+        {selectedCountry.map((_, index) => (
+          <CurrencyCard
+            key={index}
+            cardId={index}
+            currencies={currencies}
+            selectedCountry={selectedCountry}
+            setSelectedCountry={setSelectedCountry}
+            focusCard={focusCard}
+            setFocusCard={handleFocusChange}
+            prices={prices}
+          />
+        ))}
       </div>
       <NumberPad setNumpad={setNumpad} />
     </div>
