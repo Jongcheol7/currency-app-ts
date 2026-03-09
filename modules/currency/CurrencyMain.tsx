@@ -6,7 +6,7 @@ import NumberPad from "./NumberPad";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 
-type CardCount = 2 | 4 | 6;
+type CardCount = 2 | 3 | 4 | 5 | 6;
 const DEFAULT_CURRENCIES = ["KRW", "USD", "VND", "JPY", "EUR", "CNY"];
 
 export default function CurrencyMain() {
@@ -24,17 +24,14 @@ export default function CurrencyMain() {
   const freshInputRef = useRef(false);
 
   // 포커스 변경 후 첫 숫자 입력 시 기존 값을 지우고 새로 시작하는 래퍼
-  const numpadInput = useCallback(
-    (updater: (prev: string) => string) => {
-      if (freshInputRef.current) {
-        freshInputRef.current = false;
-        setNumpad(() => updater("0"));
-      } else {
-        setNumpad((prev) => updater(prev));
-      }
-    },
-    []
-  );
+  const numpadInput = useCallback((updater: (prev: string) => string) => {
+    if (freshInputRef.current) {
+      freshInputRef.current = false;
+      setNumpad(() => updater("0"));
+    } else {
+      setNumpad((prev) => updater(prev));
+    }
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -147,7 +144,11 @@ export default function CurrencyMain() {
           />
         ))}
       </div>
-      <NumberPad numpadInput={numpadInput} setNumpad={setNumpad} freshInputRef={freshInputRef} />
+      <NumberPad
+        numpadInput={numpadInput}
+        setNumpad={setNumpad}
+        freshInputRef={freshInputRef}
+      />
     </div>
   );
 }
