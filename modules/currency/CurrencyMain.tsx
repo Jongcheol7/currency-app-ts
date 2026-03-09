@@ -3,7 +3,7 @@ import { CountryInfo } from "@/lib/countryInfo";
 import CurrencyHeader from "./CurrencyHeader";
 import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 
 type CardCount = 2 | 4 | 6;
@@ -21,6 +21,46 @@ export default function CurrencyMain() {
   const { data, isLoading, error } = useExchangeRates();
 
   const skipRecalcRef = useRef(false);
+  const freshInputRef = useRef(false);
+
+  // 포커스 변경 후 첫 숫자 입력 시 기존 값을 지우고 새로 시작하는 래퍼
+  const numpadInput = useCallback(
+    (updater: (prev: string) => string) => {
+      if (freshInputRef.current) {
+        freshInputRef.current = false;
+        setNumpad((prev) => updater("0"));
+      } else {
+        setNumpad((prev) => updater(prev));
+      }
+    },
+    []
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.isComposing) return;
+
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+
+      if (/^[0-9]$/.test(e.key)) {
+        numpadInput((prev) => (prev === "0" ? e.key : prev + e.key));
+      } else if (e.key === ".") {
+        numpadInput((prev) => (prev.includes(".") ? prev : prev + "."));
+      } else if (e.key === "Backspace") {
+        numpadInput((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)));
+      } else if (e.key === "Escape" || e.key === "Delete") {
+        freshInputRef.current = false;
+        setNumpad("0");
+      }
+    },
+    [numpadInput]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   const handleCardCountChange = (count: CardCount) => {
     if (count === cardCount) return;
@@ -29,7 +69,6 @@ export default function CurrencyMain() {
     let newCountries: string[];
 
     if (count > prevCount) {
-      // 늘어난 만큼 기본 통화에서 아직 선택 안 된 것으로 채움
       const remaining = DEFAULT_CURRENCIES.filter(
         (c) => !selectedCountry.includes(c)
       );
@@ -39,7 +78,6 @@ export default function CurrencyMain() {
       newCountries = selectedCountry.slice(0, count);
     }
 
-    // 포커스가 범위 밖이면 0으로 리셋
     const newFocus = focusCard >= count ? 0 : focusCard;
 
     setCardCount(count);
@@ -47,11 +85,13 @@ export default function CurrencyMain() {
     setPrices(Array(count).fill(0));
     setNumpad("0");
     setFocusCard(newFocus);
+    freshInputRef.current = false;
   };
 
   const handleFocusChange = (cardId: number) => {
     if (cardId === focusCard) return;
     skipRecalcRef.current = true;
+    freshInputRef.current = true;
     setNumpad(String(prices[cardId]));
     setFocusCard(cardId);
   };
@@ -107,7 +147,7 @@ export default function CurrencyMain() {
           />
         ))}
       </div>
-      <NumberPad setNumpad={setNumpad} />
+      <NumberPad numpadInput={numpadInput} setNumpad={setNumpad} freshInputRef={freshInputRef} />
     </div>
   );
 }

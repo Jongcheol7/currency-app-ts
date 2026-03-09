@@ -1,5 +1,7 @@
 type Props = {
+  numpadInput: (updater: (prev: string) => string) => void;
   setNumpad: React.Dispatch<React.SetStateAction<string>>;
+  freshInputRef: React.RefObject<boolean>;
 };
 
 const KEYS = [
@@ -8,9 +10,9 @@ const KEYS = [
   "1", "2", "3",
 ] as const;
 
-export default function NumberPad({ setNumpad }: Props) {
+export default function NumberPad({ numpadInput, setNumpad, freshInputRef }: Props) {
   const handleDigit = (digit: string) => {
-    setNumpad((prev) => (prev === "0" ? digit : prev + digit));
+    numpadInput((prev) => (prev === "0" ? digit : prev + digit));
   };
 
   return (
@@ -35,7 +37,7 @@ export default function NumberPad({ setNumpad }: Props) {
         <button
           className="p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
           onClick={() =>
-            setNumpad((prev) => (prev.includes(".") ? prev : prev + "."))
+            numpadInput((prev) => (prev.includes(".") ? prev : prev + "."))
           }
         >
           .
@@ -45,7 +47,7 @@ export default function NumberPad({ setNumpad }: Props) {
           <button
             className="w-full p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
             onClick={() =>
-              setNumpad((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)))
+              numpadInput((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)))
             }
           >
             ←
@@ -53,7 +55,10 @@ export default function NumberPad({ setNumpad }: Props) {
 
           <button
             className="w-full p-3 font-bold bg-white hover:bg-gray-100 transition-all rounded-2xl text-2xl"
-            onClick={() => setNumpad("0")}
+            onClick={() => {
+              freshInputRef.current = false;
+              setNumpad("0");
+            }}
           >
             C
           </button>
