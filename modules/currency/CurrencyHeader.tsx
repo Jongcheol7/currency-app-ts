@@ -1,13 +1,21 @@
 "use client";
 import PostRatesButton from "./PostRateButton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LayoutGrid } from "lucide-react";
+
+type CardCount = 2 | 3 | 4 | 5 | 6;
 
 type Props = {
   updatedDate: Date;
   cardCount: number;
-  onCardCountChange: (count: 2 | 4 | 6) => void;
+  onCardCountChange: (count: CardCount) => void;
 };
-
-const CARD_COUNTS = [2, 4, 6] as const;
 
 export default function CurrencyHeader({
   updatedDate,
@@ -27,20 +35,25 @@ export default function CurrencyHeader({
           hour12: false,
         })}
       </p>
-      <div className="flex gap-1 items-center">
-        {CARD_COUNTS.map((count) => (
-          <button
-            key={count}
-            onClick={() => onCardCountChange(count)}
-            className={`px-3 py-1 rounded text-sm font-bold transition-all ${
-              cardCount === count
-                ? "bg-amber-400 text-white"
-                : "bg-white hover:bg-gray-100"
-            }`}
+      <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-1.5">
+          <LayoutGrid className="size-4 text-gray-500" />
+          <Select
+            value={String(cardCount)}
+            onValueChange={(v) => onCardCountChange(Number(v) as CardCount)}
           >
-            {count}
-          </button>
-        ))}
+            <SelectTrigger size="sm" className="w-20 bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[2, 3, 4, 5, 6].map((count) => (
+                <SelectItem key={count} value={String(count)}>
+                  {count}개
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {process.env.NODE_ENV === "development" && <PostRatesButton />}
       </div>
     </div>

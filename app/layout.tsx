@@ -21,9 +21,10 @@ export default function RootLayout({
         <title>환율</title>
         <link rel="icon" href="/currency-logo.png" />
       </head>
-      <body className="sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto px-2 bg-gray-200">
-        {/* <body className="px-36  bg-gray-200"> */}
-        <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+      <body className="bg-gray-200">
+        <div className="sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto px-2">
+          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+        </div>
       </body>
     </html>
   );
