@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { CountryInfo } from "@/lib/contryInfo";
+import { CountryInfo } from "@/lib/countryInfo";
 import { useBaseCurrencyStore } from "@/lib/store/useBaseCurrencyStore";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 //import { fetchExchangeChartData } from "@/lib/api";

@@ -1,7 +1,8 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { CountryInfo } from "@/lib/contryInfo";
+import { CountryInfo } from "@/lib/countryInfo";
 import { useLangueStore } from "@/lib/store/useLangueStore";
+import type { LangCode } from "@/lib/types";
 import Image from "next/image";
 
 type Props = {
@@ -13,8 +14,6 @@ type Props = {
   setFocusCard: (value: number) => void;
   prices: number[];
 };
-
-type LangCode = "ko" | "en" | "ja" | "zh" | "es";
 
 export default function CurrencyCard({
   cardId,

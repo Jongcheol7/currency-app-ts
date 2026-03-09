@@ -1,5 +1,5 @@
 "use client";
-import { CountryInfo } from "@/lib/contryInfo";
+import { CountryInfo } from "@/lib/countryInfo";
 import CurrencyHeader from "./CurrencyHeader";
 import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
@@ -50,44 +50,21 @@ export default function CurrencyMain() {
     <div className="flex flex-col justify-between">
       <CurrencyHeader updatedDate={data.updatedDate} />
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <CurrencyCard
-          cardId={0}
-          currencies={currencies}
-          selectedCountry={selectedCountry}
-          setSelectedCountry={setSelectedCountry}
-          focusCard={focusCard}
-          setFocusCard={setFocusCard}
-          prices={prices}
-        />
-        <CurrencyCard
-          cardId={1}
-          currencies={currencies}
-          selectedCountry={selectedCountry}
-          setSelectedCountry={setSelectedCountry}
-          focusCard={focusCard}
-          setFocusCard={setFocusCard}
-          prices={prices}
-        />
-        <CurrencyCard
-          cardId={2}
-          currencies={currencies}
-          selectedCountry={selectedCountry}
-          setSelectedCountry={setSelectedCountry}
-          focusCard={focusCard}
-          setFocusCard={setFocusCard}
-          prices={prices}
-        />
-        {!isMobile && (
-          <CurrencyCard
-            cardId={3}
-            currencies={currencies}
-            selectedCountry={selectedCountry}
-            setSelectedCountry={setSelectedCountry}
-            focusCard={focusCard}
-            setFocusCard={setFocusCard}
-            prices={prices}
-          />
-        )}
+        {selectedCountry.map((_, index) => {
+          if (isMobile && index >= 3) return null;
+          return (
+            <CurrencyCard
+              key={index}
+              cardId={index}
+              currencies={currencies}
+              selectedCountry={selectedCountry}
+              setSelectedCountry={setSelectedCountry}
+              focusCard={focusCard}
+              setFocusCard={setFocusCard}
+              prices={prices}
+            />
+          );
+        })}
       </div>
       <NumberPad setNumpad={setNumpad} />
     </div>

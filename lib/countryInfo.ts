@@ -1,24 +1,4 @@
-type CountryNames = {
-  ko: string;
-  en: string;
-  ja: string;
-  zh: string;
-  es: string;
-};
-
-type CurrencyUnit = {
-  ko: string;
-  en: string;
-  ja: string;
-  zh: string;
-  es: string;
-};
-
-type CountryData = {
-  flag: string;
-  names: CountryNames;
-  unit: CurrencyUnit;
-};
+import type { CountryData } from "./types";
 
 export const CountryInfo: Record<string, CountryData> = {
   KRW: {

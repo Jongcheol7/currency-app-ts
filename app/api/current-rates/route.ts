@@ -1,4 +1,4 @@
-import { CountryInfo } from "@/lib/contryInfo";
+import { CountryInfo } from "@/lib/countryInfo";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 

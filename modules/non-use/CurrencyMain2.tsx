@@ -2,7 +2,7 @@
 //import { useExchangeRates } from "./hooks/useExchangeRates";
 import { useEffect, useState } from "react";
 //import { dummyData } from "@/lib/sampleData";
-import { CountryInfo } from "@/lib/contryInfo";
+import { CountryInfo } from "@/lib/countryInfo";
 import { useBaseCurrencyStore } from "@/lib/store/useBaseCurrencyStore";
 import useIsMobile from "@/hooks/useIsMobile";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
