@@ -3,7 +3,7 @@ import { CountryInfo } from "@/lib/countryInfo";
 import CurrencyHeader from "./CurrencyHeader";
 import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import useIsMobile from "@/hooks/useIsMobile";
 
@@ -21,7 +21,21 @@ export default function CurrencyMain() {
   const { data, isLoading, error } = useExchangeRates();
   const isMobile = useIsMobile();
 
+  const skipRecalcRef = useRef(false);
+
+  const handleFocusChange = (cardId: number) => {
+    if (cardId === focusCard) return;
+    skipRecalcRef.current = true;
+    setNumpad(String(prices[cardId]));
+    setFocusCard(cardId);
+  };
+
   useEffect(() => {
+    if (skipRecalcRef.current) {
+      skipRecalcRef.current = false;
+      return;
+    }
+
     if (!data || !data.rateData) return;
 
     const parsed = parseFloat(numPad);
@@ -60,7 +74,7 @@ export default function CurrencyMain() {
               selectedCountry={selectedCountry}
               setSelectedCountry={setSelectedCountry}
               focusCard={focusCard}
-              setFocusCard={setFocusCard}
+              setFocusCard={handleFocusChange}
               prices={prices}
             />
           );
