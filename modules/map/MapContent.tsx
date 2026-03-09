@@ -6,6 +6,9 @@ import {
   Autocomplete,
 } from "@react-google-maps/api";
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useLangueStore } from "@/lib/store/useLangueStore";
+import { t } from "@/lib/translations";
+import type { LangCode } from "@/lib/types";
 
 const libraries: "places"[] = ["places"];
 const mapContainerStyle = { width: "100%", height: "80vh" };
@@ -21,6 +24,9 @@ type CleanPlace = {
 };
 
 export default function MapContent() {
+  const { language } = useLangueStore();
+  const lang = language as LangCode;
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries,
@@ -132,7 +138,7 @@ export default function MapContent() {
         >
           <input
             type="text"
-            placeholder="장소 검색 (예: 강남역)"
+            placeholder={t("searchPlaceholder", lang)}
             className="w-full p-2 border rounded outline-none"
           />
         </Autocomplete>
@@ -143,7 +149,7 @@ export default function MapContent() {
         onClick={handleRecenter}
         className="absolute top-4 right-4 z-10 bg-white border px-3 py-1 rounded shadow hover:bg-gray-100 transition"
       >
-        현재 지도 위치로 재검색
+        {t("researchMap", lang)}
       </button>
 
       {/* 내 위치 찾기 */}
@@ -151,7 +157,7 @@ export default function MapContent() {
         onClick={handleFindMe}
         className="absolute bottom-4 left-4 z-10 bg-blue-500 text-white px-3 py-2 rounded-full shadow-lg hover:bg-blue-600"
       >
-        내 위치 찾기
+        {t("findMe", lang)}
       </button>
 
       {/* 지도 */}
