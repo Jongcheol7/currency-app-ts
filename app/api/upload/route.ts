@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   }
 
   const { fileName, fileType } = await req.json();
-  const key = `expenses/${session.user.id}/${Date.now()}-${fileName}`;
+  const env = process.env.NODE_ENV === "production" ? "prod" : "dev";
+  const key = `${env}/expenses/${session.user.id}/${Date.now()}-${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,
@@ -41,7 +42,7 @@ export async function DELETE(req: NextRequest) {
   const { key } = await req.json();
 
   // 본인 폴더의 파일만 삭제 가능
-  if (!key.startsWith(`expenses/${session.user.id}/`)) {
+  if (!key.includes(`/expenses/${session.user.id}/`)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

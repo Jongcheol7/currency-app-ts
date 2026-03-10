@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   }
 
   const key = req.nextUrl.searchParams.get("key");
-  if (!key || !key.startsWith(`expenses/${session.user.id}/`)) {
+  if (!key || !key.includes(`/expenses/${session.user.id}/`)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
