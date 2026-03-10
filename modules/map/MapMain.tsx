@@ -1,30 +1,44 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { Map } from "lucide-react";
+import { Map, Menu } from "lucide-react";
+import { useState } from "react";
 import MapContent from "./MapContent";
+import Sidebar from "../common/Sidebar";
+import LanguegePopup from "../currency/LanguagePopup";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
 
 export default function MapMain() {
-  const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLanPopShow, setIsLanPopShow] = useState(false);
   const { language } = useLangueStore();
   const lang = language as LangCode;
 
   return (
     <div>
-      <div className="relative flex justify-between items-center">
-        <p
-          className="py-2 ml-2 my-2 font-bold hover:text-blue-500"
-          onClick={() => router.push("/")}
+      {isLanPopShow && <LanguegePopup setIsLanPopShow={setIsLanPopShow} />}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onLanguageClick={() => setIsLanPopShow(true)}
+      />
+
+      <div className="relative flex justify-between items-center px-4 pt-5 pb-2">
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="p-2 rounded-full hover:bg-white/70 active:bg-white/90 transition-colors"
         >
-          {t("back", lang)}
-        </p>
-        <div className="absolute flex items-center gap-1 left-1/2 -translate-x-1/2 transform py-2 my-2 text-2xl font-bold">
-          <Map />
-          <p>{t("exchangeLocation", lang)}</p>
+          <Menu className="size-5 text-slate-600" />
+        </button>
+
+        <div className="absolute flex items-center gap-1.5 left-1/2 -translate-x-1/2 transform">
+          <Map className="size-5 text-slate-600" />
+          <h1 className="text-xl font-bold tracking-tight text-slate-800">
+            {t("exchangeLocation", lang)}
+          </h1>
         </div>
-        <p></p>
+
+        <div className="w-9" />
       </div>
       <MapContent />
     </div>

@@ -126,8 +126,18 @@ export default function CurrencyMain() {
     setPrices(newPrices);
   }, [numPad, selectedCountry, data, focusCard]);
 
-  if (isLoading) return <div>불러오는 중...</div>;
-  if (error) return <div>에러가 발생했습니다...</div>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
+        불러오는 중...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="flex items-center justify-center py-20 text-red-400 text-sm">
+        에러가 발생했습니다...
+      </div>
+    );
 
   return (
     <div className="flex flex-col justify-between">
@@ -136,7 +146,7 @@ export default function CurrencyMain() {
         cardCount={cardCount}
         onCardCountChange={handleCardCountChange}
       />
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
         {selectedCountry.map((_, index) => (
           <CurrencyCard
             key={index}

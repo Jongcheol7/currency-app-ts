@@ -1,16 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
+import { Check, Languages } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
   setIsLanPopShow: (value: boolean) => void;
 };
+
+const LANGUAGES = [
+  { value: "ko", label: "한국어", sub: "Korean" },
+  { value: "en", label: "English", sub: "English" },
+  { value: "ja", label: "日本語", sub: "Japanese" },
+  { value: "zh", label: "中文", sub: "Chinese" },
+  { value: "es", label: "Español", sub: "Spanish" },
+] as const;
+
 export default function LanguegePopup({ setIsLanPopShow }: Props) {
   const { language, setLanguage } = useLangueStore();
   const [selectedLanguage, setSelectedLanguage] = useState(language);
-
-  //console.log("zustand langauge : ", language);
 
   const handleConfirm = () => {
     setLanguage(selectedLanguage);
@@ -19,64 +27,57 @@ export default function LanguegePopup({ setIsLanPopShow }: Props) {
 
   return (
     <div>
-      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-50 px-5 py-7 rounded-xl shadow-lg">
-        <div className="flex items-center gap-3 justify-between">
-          <h1 className="text-xl font-bold">Select Languege</h1>
-          <Button className="py-0 px-2" onClick={handleConfirm}>
-            확인
-          </Button>
+      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-50 w-72 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="flex items-center gap-2 px-5 pt-5 pb-3">
+          <Languages className="size-5 text-slate-600" />
+          <h1 className="text-lg font-bold text-slate-800">Language</h1>
         </div>
 
         <RadioGroup
           value={selectedLanguage}
           onValueChange={(value) => setSelectedLanguage(value)}
-          className="space-y-3 mt-4"
+          className="px-2 pb-2"
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="ko"
-              id="ko"
-              className="w-4 h-4 rounded-full border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black"
-            />
-            <label htmlFor="ko">Korean</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="en"
-              id="en"
-              className="w-4 h-4 rounded-full border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black"
-            />
-            <label htmlFor="en">English</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="ja"
-              id="ja"
-              className="w-4 h-4 rounded-full border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black"
-            />
-            <label htmlFor="ja">Japanese</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="zh"
-              id="zh"
-              className="w-4 h-4 rounded-full border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black"
-            />
-            <label htmlFor="zh">Chinese</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="es"
-              id="es"
-              className="w-4 h-4 rounded-full border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black"
-            />
-            <label htmlFor="es">Spanish</label>
-          </div>
+          {LANGUAGES.map(({ value, label, sub }) => (
+            <label
+              key={value}
+              htmlFor={value}
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer transition-colors ${
+                selectedLanguage === value
+                  ? "bg-blue-50 text-blue-700"
+                  : "hover:bg-slate-50 text-slate-700"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <RadioGroupItem
+                  value={value}
+                  id={value}
+                  className="sr-only"
+                />
+                <span className="font-medium text-sm">{label}</span>
+                {label !== sub && (
+                  <span className="text-xs text-slate-400">{sub}</span>
+                )}
+              </div>
+              {selectedLanguage === value && (
+                <Check className="size-4 text-blue-500" />
+              )}
+            </label>
+          ))}
         </RadioGroup>
+
+        <div className="px-4 pb-4 pt-1">
+          <Button
+            className="w-full rounded-xl"
+            onClick={handleConfirm}
+          >
+            확인
+          </Button>
+        </div>
       </div>
 
       <div
-        className="fixed inset-0 bg-black/60 z-20"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-20"
         onClick={() => setIsLanPopShow(false)}
       />
     </div>

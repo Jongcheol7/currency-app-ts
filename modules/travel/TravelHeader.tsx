@@ -2,12 +2,12 @@
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import LanguegePopup from "../currency/LanguagePopup";
-import Sidebar from "./Sidebar";
+import Sidebar from "../common/Sidebar";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
 
-export default function Header() {
+export default function TravelHeader() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLanPopShow, setIsLanPopShow] = useState(false);
   const { language } = useLangueStore();
@@ -31,7 +31,7 @@ export default function Header() {
         </button>
 
         <h1 className="absolute left-1/2 -translate-x-1/2 transform text-xl font-bold tracking-tight text-slate-800">
-          {t("currencyCalculator", lang)}
+          {t("travelExpense", lang)}
         </h1>
 
         <div className="w-9" />

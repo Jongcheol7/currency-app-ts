@@ -50,10 +50,10 @@ export default function CurrencyCard({
       }}
     >
       <Card
-        className={`transition-all cursor-pointer border-2 px-3 py-2 ${
+        className={`transition-all duration-200 cursor-pointer px-3 py-2 ${
           focusCard === cardId
-            ? "border-amber-200 bg-amber-100"
-            : "border-transparent"
+            ? "border-2 border-blue-400/60 bg-blue-50/80 shadow-md shadow-blue-100"
+            : "border-2 border-transparent bg-white/80 hover:bg-white hover:shadow-sm"
         }`}
       >
         {/* 모바일: 좌우 한 줄 */}
@@ -63,10 +63,10 @@ export default function CurrencyCard({
             width={32}
             height={24}
             alt={currencyCode}
-            className="border shrink-0"
+            className="rounded-sm shadow-sm shrink-0"
           />
           <Select value={currencyCode} onValueChange={handleCurrencyChange}>
-            <SelectTrigger size="sm" className="w-[76px] shrink-0 text-xs">
+            <SelectTrigger size="sm" className="w-[76px] shrink-0 text-xs bg-white/60 border-slate-200">
               <SelectValue>{currencyCode}</SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -77,7 +77,7 @@ export default function CurrencyCard({
               ))}
             </SelectContent>
           </Select>
-          <p className="flex-1 border rounded px-2 py-1 text-right font-bold text-sm min-w-[80px]">
+          <p className="flex-1 bg-slate-50/80 rounded-lg px-2.5 py-1.5 text-right font-bold text-sm min-w-[80px] tabular-nums tracking-tight">
             {prices[cardId].toLocaleString()}
           </p>
         </div>
@@ -90,10 +90,10 @@ export default function CurrencyCard({
               width={40}
               height={30}
               alt={currencyCode}
-              className="border shrink-0"
+              className="rounded-sm shadow-sm shrink-0"
             />
             <Select value={currencyCode} onValueChange={handleCurrencyChange}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger className="flex-1 bg-white/60 border-slate-200">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -105,7 +105,7 @@ export default function CurrencyCard({
               </SelectContent>
             </Select>
           </div>
-          <p className="border rounded px-2 py-1 text-right font-bold">
+          <p className="bg-slate-50/80 rounded-lg px-2.5 py-1.5 text-right font-bold tabular-nums tracking-tight">
             {prices[cardId].toLocaleString()}
           </p>
         </div>
