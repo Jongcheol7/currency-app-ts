@@ -6,6 +6,7 @@ import type { LangCode } from "@/lib/types";
 import {
   ArrowLeft,
   Camera,
+  Download,
   MapPin,
   Navigation,
   Trash2,
@@ -26,13 +27,29 @@ import { compressImage } from "@/lib/compressImage";
 
 const CATEGORY_STYLES: Record<
   string,
-  { icon: React.ComponentType<{ className?: string }>; bg: string; iconColor: string }
+  {
+    icon: React.ComponentType<{ className?: string }>;
+    bg: string;
+    iconColor: string;
+  }
 > = {
-  food: { icon: UtensilsCrossed, bg: "bg-orange-50", iconColor: "text-orange-500" },
+  food: {
+    icon: UtensilsCrossed,
+    bg: "bg-orange-50",
+    iconColor: "text-orange-500",
+  },
   transport: { icon: Car, bg: "bg-blue-50", iconColor: "text-blue-500" },
   shopping: { icon: ShoppingBag, bg: "bg-pink-50", iconColor: "text-pink-500" },
-  accommodation: { icon: Bed, bg: "bg-violet-50", iconColor: "text-violet-500" },
-  sightseeing: { icon: CameraIcon, bg: "bg-emerald-50", iconColor: "text-emerald-500" },
+  accommodation: {
+    icon: Bed,
+    bg: "bg-violet-50",
+    iconColor: "text-violet-500",
+  },
+  sightseeing: {
+    icon: CameraIcon,
+    bg: "bg-emerald-50",
+    iconColor: "text-emerald-500",
+  },
   other: { icon: Package, bg: "bg-slate-50", iconColor: "text-slate-500" },
 };
 
@@ -44,17 +61,26 @@ type Props = {
   deleteExpense: (id: string) => Promise<void>;
 };
 
-export default function ExpenseDetail({ expense, currencyCode, onBack, updateExpense, deleteExpense }: Props) {
+export default function ExpenseDetail({
+  expense,
+  currencyCode,
+  onBack,
+  updateExpense,
+  deleteExpense,
+}: Props) {
   const { language } = useLangueStore();
   const lang = language as LangCode;
   const { data: session } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [uploading, setUploading] = useState(false);
-  const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
+  const [lightboxPhoto, setLightboxPhoto] = useState<Photo | null>(null);
   const [locationInput, setLocationInput] = useState(expense.location ?? "");
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [savingLocation, setSavingLocation] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const style = CATEGORY_STYLES[expense.category] || CATEGORY_STYLES.other;
   const Icon = style.icon;
@@ -84,7 +110,10 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileName: compressed.name, fileType: compressed.type }),
+        body: JSON.stringify({
+          fileName: compressed.name,
+          fileType: compressed.type,
+        }),
       });
       const { uploadUrl, key, imageUrl } = await res.json();
 
@@ -136,27 +165,38 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
         setGettingLocation(false);
       },
       () => setGettingLocation(false),
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true },
     );
   };
 
   const handleSaveLocation = async () => {
-    await updateExpense(expense.id, { location: locationInput.trim() });
-    setIsEditingLocation(false);
+    if (savingLocation) return;
+    setSavingLocation(true);
+    try {
+      await updateExpense(expense.id, { location: locationInput.trim() });
+      setIsEditingLocation(false);
+    } finally {
+      setSavingLocation(false);
+    }
   };
 
   const handleDelete = async () => {
+    if (deleting) return;
     if (window.confirm("이 지출을 삭제하시겠습니까?")) {
-      // S3 사진도 삭제
-      for (const p of photos) {
-        await fetch("/api/upload", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ key: p.key }),
-        });
+      setDeleting(true);
+      try {
+        for (const p of photos) {
+          await fetch("/api/upload", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: p.key }),
+          });
+        }
+        await deleteExpense(expense.id);
+        onBack();
+      } finally {
+        setDeleting(false);
       }
-      await deleteExpense(expense.id);
-      onBack();
     }
   };
 
@@ -170,14 +210,47 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
           onClick={() => setLightboxPhoto(null)}
         >
-          <button
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/20 text-white"
-            onClick={() => setLightboxPhoto(null)}
-          >
-            <X className="size-6" />
-          </button>
+          <div className="absolute top-4 right-4 flex gap-2">
+            <button
+              onClick={async (e) => {
+                e.stopPropagation();
+                setDownloading(true);
+                try {
+                  const res = await fetch(
+                    `/api/download?key=${encodeURIComponent(lightboxPhoto.key)}`,
+                  );
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `photo-${Date.now()}.jpg`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                } catch (err) {
+                  console.error("Download failed:", err);
+                } finally {
+                  setDownloading(false);
+                }
+              }}
+              disabled={downloading}
+              className="p-2 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors"
+            >
+              {downloading ? (
+                <Loader2 className="size-6 animate-spin" />
+              ) : (
+                <Download className="size-6" />
+              )}
+            </button>
+            <button
+              className="p-2 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors"
+              onClick={() => setLightboxPhoto(null)}
+            >
+              <X className="size-6" />
+            </button>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={lightboxPhoto}
+            src={lightboxPhoto.url}
             alt="photo"
             className="max-w-full max-h-full rounded-xl object-contain"
           />
@@ -209,7 +282,9 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
             {currencyCode}
           </span>
         </p>
-        <p className="text-sm text-slate-400 mt-2">{formatDate(expense.date)}</p>
+        <p className="text-sm text-slate-400 mt-2">
+          {formatDate(expense.date)}
+        </p>
         {expense.memo && (
           <p className="text-sm text-slate-500 mt-1">{expense.memo}</p>
         )}
@@ -234,9 +309,10 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
             <div className="flex gap-2">
               <button
                 onClick={handleSaveLocation}
-                className="flex-1 text-sm font-medium text-white bg-slate-700 rounded-xl py-2 hover:bg-slate-800 transition-colors"
+                disabled={savingLocation}
+                className="flex-1 text-sm font-medium text-white bg-slate-700 rounded-xl py-2 hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
-                저장
+                {savingLocation ? <Loader2 className="size-3.5 animate-spin" /> : "저장"}
               </button>
               <button
                 onClick={() => setIsEditingLocation(false)}
@@ -283,9 +359,11 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
         {/* Static Map */}
         {expense.lat && expense.lng && mapsApiKey && (
           <div className="mt-3">
-            <img
+            <Image
               src={`https://maps.googleapis.com/maps/api/staticmap?center=${expense.lat},${expense.lng}&zoom=15&size=600x200&scale=2&markers=color:red|${expense.lat},${expense.lng}&key=${mapsApiKey}`}
               alt="location map"
+              width={600}
+              height={200}
               className="w-full h-32 object-cover rounded-xl"
             />
           </div>
@@ -303,11 +381,13 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
         <div className="grid grid-cols-3 gap-2">
           {photos.map((photo) => (
             <div key={photo.key} className="relative group aspect-square">
-              <img
+              <Image
                 src={photo.url}
                 alt="expense photo"
+                width={200}
+                height={200}
                 className="w-full h-full object-cover rounded-xl cursor-pointer"
-                onClick={() => setLightboxPhoto(photo.url)}
+                onClick={() => setLightboxPhoto(photo)}
               />
               <button
                 onClick={() => handleDeletePhoto(photo)}
@@ -354,10 +434,11 @@ export default function ExpenseDetail({ expense, currencyCode, onBack, updateExp
       {/* Delete button */}
       <button
         onClick={handleDelete}
-        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors"
+        disabled={deleting}
+        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50"
       >
-        <Trash2 className="size-4" />
-        지출 삭제
+        {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+        {deleting ? "삭제 중..." : "지출 삭제"}
       </button>
     </div>
   );

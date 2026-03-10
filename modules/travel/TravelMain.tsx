@@ -4,7 +4,7 @@ import { useTravelData } from "@/hooks/useTravelData";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
-import { Plane, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plane, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import AddTripModal from "./AddTripModal";
@@ -17,6 +17,7 @@ export default function TravelMain() {
   const { trips, expenses, loading, addTrip, deleteTrip, addExpense, updateExpense, deleteExpense, refresh } = useTravelData();
   const [showAddTrip, setShowAddTrip] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [deletingTripId, setDeletingTripId] = useState<string | null>(null);
 
   const handleAddTrip = async (data: {
     name: string;
@@ -122,13 +123,24 @@ export default function TravelMain() {
                     <p className="text-xs text-slate-400">{unitName}</p>
                   </div>
                   <button
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
-                      deleteTrip(trip.id);
+                      if (deletingTripId) return;
+                      setDeletingTripId(trip.id);
+                      try {
+                        await deleteTrip(trip.id);
+                      } finally {
+                        setDeletingTripId(null);
+                      }
                     }}
+                    disabled={deletingTripId === trip.id}
                     className="p-2 rounded-full hover:bg-red-50 transition-colors shrink-0"
                   >
-                    <Trash2 className="size-4 text-slate-300 hover:text-red-400" />
+                    {deletingTripId === trip.id ? (
+                      <Loader2 className="size-4 text-slate-300 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-4 text-slate-300 hover:text-red-400" />
+                    )}
                   </button>
                 </div>
               </div>

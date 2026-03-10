@@ -11,12 +11,12 @@ import { CountryInfo } from "@/lib/countryInfo";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
   onClose: () => void;
-  onSave: (trip: { name: string; currency: string; startDate: string; endDate: string }) => void;
+  onSave: (trip: { name: string; currency: string; startDate: string; endDate: string }) => Promise<void> | void;
 };
 
 export default function AddTripModal({ onClose, onSave }: Props) {
@@ -29,10 +29,16 @@ export default function AddTripModal({ onClose, onSave }: Props) {
   const [currency, setCurrency] = useState("JPY");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
-    if (!name.trim()) return;
-    onSave({ name: name.trim(), currency, startDate, endDate });
+  const handleSave = async () => {
+    if (!name.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ name: name.trim(), currency, startDate, endDate });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -122,9 +128,9 @@ export default function AddTripModal({ onClose, onSave }: Props) {
             <Button
               className="flex-1 rounded-xl"
               onClick={handleSave}
-              disabled={!name.trim()}
+              disabled={!name.trim() || saving}
             >
-              {t("save", lang)}
+              {saving ? <Loader2 className="size-4 animate-spin" /> : t("save", lang)}
             </Button>
           </div>
         </div>

@@ -1,11 +1,12 @@
 "use client";
-import { Calculator, Globe, LogIn, LogOut, MapPin, Plane, X } from "lucide-react";
+import { Calculator, Globe, Loader2, LogIn, LogOut, MapPin, Plane, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 
 type Props = {
@@ -25,6 +26,7 @@ export default function Sidebar({ isOpen, onClose, onLanguageClick }: Props) {
   const lang = language as LangCode;
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   return (
     <>
@@ -132,11 +134,16 @@ export default function Sidebar({ isOpen, onClose, onLanguageClick }: Props) {
 
             {session?.user && (
               <button
-                onClick={() => signOut()}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl w-full text-red-500 hover:bg-red-50 transition-colors"
+                onClick={async () => {
+                  if (loggingOut) return;
+                  setLoggingOut(true);
+                  await signOut();
+                }}
+                disabled={loggingOut}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl w-full text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
               >
-                <LogOut className="size-5" />
-                <span className="text-sm">로그아웃</span>
+                {loggingOut ? <Loader2 className="size-5 animate-spin" /> : <LogOut className="size-5" />}
+                <span className="text-sm">{loggingOut ? "로그아웃 중..." : "로그아웃"}</span>
               </button>
             )}
           </div>

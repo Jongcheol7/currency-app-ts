@@ -15,6 +15,7 @@ import {
   Bed,
   Camera,
   Package,
+  Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
@@ -56,6 +57,7 @@ export default function TripDetail({
   const lang = language as LangCode;
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
 
   const tripExpenses = useMemo(
     () =>
@@ -194,13 +196,24 @@ export default function TripDetail({
                         className={`relative overflow-hidden rounded-2xl border ${style.accent} ${style.bg} p-3 flex flex-col items-center text-center hover:scale-[1.03] transition-transform duration-150 cursor-pointer`}
                       >
                         <button
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.stopPropagation();
-                            deleteExpense(expense.id);
+                            if (deletingExpenseId) return;
+                            setDeletingExpenseId(expense.id);
+                            try {
+                              await deleteExpense(expense.id);
+                            } finally {
+                              setDeletingExpenseId(null);
+                            }
                           }}
+                          disabled={deletingExpenseId === expense.id}
                           className="absolute top-1.5 right-1.5 p-1 rounded-full hover:bg-white/60 transition-colors"
                         >
-                          <Trash2 className="size-3 text-slate-300 hover:text-red-400" />
+                          {deletingExpenseId === expense.id ? (
+                            <Loader2 className="size-3 text-slate-300 animate-spin" />
+                          ) : (
+                            <Trash2 className="size-3 text-slate-300 hover:text-red-400" />
+                          )}
                         </button>
                         <div className={`p-2.5 rounded-full bg-white/60 mb-2`}>
                           <Icon className={`size-5 ${style.iconColor}`} />

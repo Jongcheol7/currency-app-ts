@@ -11,12 +11,13 @@ import {
   Camera,
   Package,
   X,
+  Loader2,
 } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
   onClose: () => void;
-  onSave: (expense: { date: string; amount: number; category: string; memo: string }) => void;
+  onSave: (expense: { date: string; amount: number; category: string; memo: string }) => Promise<void> | void;
   defaultDate: string;
   currencyCode: string;
 };
@@ -43,11 +44,17 @@ export default function AddExpenseModal({
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("food");
   const [memo, setMemo] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const parsed = parseFloat(amount);
-    if (isNaN(parsed) || parsed <= 0) return;
-    onSave({ date, amount: parsed, category, memo: memo.trim() });
+    if (isNaN(parsed) || parsed <= 0 || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ date, amount: parsed, category, memo: memo.trim() });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -143,9 +150,9 @@ export default function AddExpenseModal({
             <Button
               className="flex-1 rounded-xl"
               onClick={handleSave}
-              disabled={!amount || parseFloat(amount) <= 0}
+              disabled={!amount || parseFloat(amount) <= 0 || saving}
             >
-              {t("save", lang)}
+              {saving ? <Loader2 className="size-4 animate-spin" /> : t("save", lang)}
             </Button>
           </div>
         </div>
