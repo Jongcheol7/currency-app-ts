@@ -1,4 +1,5 @@
 import ReactQueryClientProvider from "@/components/common/ReactQueryProvider";
+import SessionProvider from "@/components/common/SessionProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({
       </head>
       <body className="bg-gradient-to-b from-slate-100 to-slate-200 min-h-screen">
         <div className="sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto px-3">
-          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+          <SessionProvider>
+            <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+          </SessionProvider>
         </div>
       </body>
     </html>

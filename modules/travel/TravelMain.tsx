@@ -1,6 +1,6 @@
 "use client";
 import { CountryInfo } from "@/lib/countryInfo";
-import { useTravelStore } from "@/lib/store/useTravelStore";
+import { useTravelData } from "@/hooks/useTravelData";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
@@ -14,25 +14,40 @@ import type { Trip } from "@/lib/store/useTravelStore";
 export default function TravelMain() {
   const { language } = useLangueStore();
   const lang = language as LangCode;
-  const { trips, expenses, addTrip, deleteTrip } = useTravelStore();
+  const { trips, expenses, loading, addTrip, deleteTrip, addExpense, updateExpense, deleteExpense, refresh } = useTravelData();
   const [showAddTrip, setShowAddTrip] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
 
-  const handleAddTrip = (data: {
+  const handleAddTrip = async (data: {
     name: string;
     currency: string;
     startDate: string;
     endDate: string;
   }) => {
-    addTrip({ id: crypto.randomUUID(), ...data });
+    await addTrip(data);
     setShowAddTrip(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
+        불러오는 중...
+      </div>
+    );
+  }
 
   if (selectedTrip) {
     return (
       <TripDetail
         trip={selectedTrip}
-        onBack={() => setSelectedTrip(null)}
+        expenses={expenses}
+        onBack={() => {
+          setSelectedTrip(null);
+          refresh();
+        }}
+        addExpense={addExpense}
+        updateExpense={updateExpense}
+        deleteExpense={deleteExpense}
       />
     );
   }
@@ -68,7 +83,7 @@ export default function TravelMain() {
         </div>
       ) : (
         <div className="space-y-2">
-          {[...trips].reverse().map((trip) => {
+          {trips.map((trip) => {
             const tripTotal = expenses
               .filter((e) => e.tripId === trip.id)
               .reduce((sum, e) => sum + e.amount, 0);

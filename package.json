@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.1",
+    "@aws-sdk/client-s3": "^3.1005.0",
+    "@aws-sdk/s3-request-presigner": "^3.1005.0",
     "@prisma/client": "^6.9.0",
     "@radix-ui/react-radio-group": "^1.3.7",
     "@radix-ui/react-select": "^2.2.5",
@@ -21,6 +24,7 @@
     "lucide-react": "^0.514.0",
     "mathjs": "^14.5.2",
     "next": "^15.5.12",
+    "next-auth": "^4.24.13",
     "prisma": "^6.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

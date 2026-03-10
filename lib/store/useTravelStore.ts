@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type Photo = {
+  key: string;
+  url: string;
+};
+
 export type Expense = {
   id: string;
   tripId: string;
@@ -8,6 +13,10 @@ export type Expense = {
   amount: number;
   category: string;
   memo: string;
+  location?: string;
+  lat?: number;
+  lng?: number;
+  photos?: Photo[];
 };
 
 export type Trip = {
@@ -24,6 +33,7 @@ type TravelState = {
   addTrip: (trip: Trip) => void;
   deleteTrip: (id: string) => void;
   addExpense: (expense: Expense) => void;
+  updateExpense: (id: string, updates: Partial<Expense>) => void;
   deleteExpense: (id: string) => void;
   getTripExpenses: (tripId: string) => Expense[];
   getTripTotal: (tripId: string) => number;
@@ -42,6 +52,12 @@ export const useTravelStore = create<TravelState>()(
         })),
       addExpense: (expense) =>
         set((s) => ({ expenses: [...s.expenses, expense] })),
+      updateExpense: (id, updates) =>
+        set((s) => ({
+          expenses: s.expenses.map((e) =>
+            e.id === id ? { ...e, ...updates } : e
+          ),
+        })),
       deleteExpense: (id) =>
         set((s) => ({ expenses: s.expenses.filter((e) => e.id !== id) })),
       getTripExpenses: (tripId) =>

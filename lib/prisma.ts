@@ -1,7 +1,7 @@
 // PrismaClient 는 DB랑 연결해주는 도구.
 // 한번 만들면 앱 전체에서 사용가능함
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/lib/generated/prisma";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

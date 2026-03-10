@@ -1,10 +1,12 @@
 "use client";
-import { Calculator, Globe, MapPin, Plane, X } from "lucide-react";
+import { Calculator, Globe, LogIn, LogOut, MapPin, Plane, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 type Props = {
   isOpen: boolean;
@@ -22,6 +24,7 @@ export default function Sidebar({ isOpen, onClose, onLanguageClick }: Props) {
   const { language } = useLangueStore();
   const lang = language as LangCode;
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <>
@@ -40,15 +43,54 @@ export default function Sidebar({ isOpen, onClose, onLanguageClick }: Props) {
         }`}
       >
         <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100">
-            <h2 className="text-lg font-bold text-slate-800">Menu</h2>
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-slate-100 transition-colors"
-            >
-              <X className="size-5 text-slate-500" />
-            </button>
+          {/* User profile / Login */}
+          <div className="px-5 pt-5 pb-4 border-b border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold text-slate-800">Menu</h2>
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+              >
+                <X className="size-5 text-slate-500" />
+              </button>
+            </div>
+
+            {session?.user ? (
+              <div className="flex items-center gap-3">
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    width={40}
+                    height={40}
+                    alt="profile"
+                    className="rounded-full"
+                  />
+                ) : (
+                  <div className="size-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-sm font-bold">
+                    {session.user.name?.[0] ?? "?"}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-800 truncate">
+                    {session.user.name}
+                  </p>
+                  <p className="text-xs text-slate-400 truncate">
+                    {session.user.email}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={onClose}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+              >
+                <LogIn className="size-5 text-slate-500" />
+                <span className="text-sm font-medium text-slate-600">
+                  로그인
+                </span>
+              </Link>
+            )}
           </div>
 
           {/* Menu items */}
@@ -75,8 +117,8 @@ export default function Sidebar({ isOpen, onClose, onLanguageClick }: Props) {
             })}
           </nav>
 
-          {/* Language button at bottom */}
-          <div className="px-3 pb-5 border-t border-slate-100 pt-3">
+          {/* Bottom section */}
+          <div className="px-3 pb-5 border-t border-slate-100 pt-3 space-y-1">
             <button
               onClick={() => {
                 onClose();
@@ -87,6 +129,16 @@ export default function Sidebar({ isOpen, onClose, onLanguageClick }: Props) {
               <Globe className="size-5" />
               <span className="text-sm">Language</span>
             </button>
+
+            {session?.user && (
+              <button
+                onClick={() => signOut()}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl w-full text-red-500 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="size-5" />
+                <span className="text-sm">로그아웃</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

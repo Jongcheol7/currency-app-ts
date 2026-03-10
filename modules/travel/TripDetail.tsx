@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { CountryInfo } from "@/lib/countryInfo";
-import { useTravelStore, type Expense } from "@/lib/store/useTravelStore";
+import type { Expense, Trip } from "@/lib/store/useTravelStore";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
@@ -19,7 +19,7 @@ import {
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import AddExpenseModal from "./AddExpenseModal";
-import type { Trip } from "@/lib/store/useTravelStore";
+import ExpenseDetail from "./ExpenseDetail";
 
 const CATEGORY_STYLES: Record<
   string,
@@ -37,14 +37,25 @@ const DEFAULT_STYLE = CATEGORY_STYLES.other;
 
 type Props = {
   trip: Trip;
+  expenses: Expense[];
   onBack: () => void;
+  addExpense: (data: { tripId: string; date: string; amount: number; category: string; memo: string }) => Promise<void>;
+  updateExpense: (id: string, updates: Partial<Expense>) => Promise<void>;
+  deleteExpense: (id: string) => Promise<void>;
 };
 
-export default function TripDetail({ trip, onBack }: Props) {
+export default function TripDetail({
+  trip,
+  expenses,
+  onBack,
+  addExpense,
+  updateExpense,
+  deleteExpense,
+}: Props) {
   const { language } = useLangueStore();
   const lang = language as LangCode;
-  const { expenses, addExpense, deleteExpense } = useTravelStore();
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const tripExpenses = useMemo(
     () =>
@@ -56,7 +67,6 @@ export default function TripDetail({ trip, onBack }: Props) {
 
   const total = tripExpenses.reduce((sum, e) => sum + e.amount, 0);
 
-  // Group expenses by date
   const groupedByDate = useMemo(() => {
     const groups: Record<string, Expense[]> = {};
     for (const expense of tripExpenses) {
@@ -70,17 +80,13 @@ export default function TripDetail({ trip, onBack }: Props) {
   const flag = countryData?.flag;
   const unitName = countryData?.unit[lang] ?? trip.currency;
 
-  const handleAddExpense = (data: {
+  const handleAddExpense = async (data: {
     date: string;
     amount: number;
     category: string;
     memo: string;
   }) => {
-    addExpense({
-      id: crypto.randomUUID(),
-      tripId: trip.id,
-      ...data,
-    });
+    await addExpense({ tripId: trip.id, ...data });
     setShowAddExpense(false);
   };
 
@@ -94,6 +100,22 @@ export default function TripDetail({ trip, onBack }: Props) {
         : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return `${month}/${day} (${weekdays[d.getDay()]})`;
   };
+
+  const currentExpense = selectedExpense
+    ? expenses.find((e) => e.id === selectedExpense.id)
+    : null;
+
+  if (currentExpense) {
+    return (
+      <ExpenseDetail
+        expense={currentExpense}
+        currencyCode={trip.currency}
+        onBack={() => setSelectedExpense(null)}
+        updateExpense={updateExpense}
+        deleteExpense={deleteExpense}
+      />
+    );
+  }
 
   return (
     <div className="pb-24">
@@ -168,10 +190,14 @@ export default function TripDetail({ trip, onBack }: Props) {
                     return (
                       <div
                         key={expense.id}
-                        className={`relative overflow-hidden rounded-2xl border ${style.accent} ${style.bg} p-3 flex flex-col items-center text-center hover:scale-[1.03] transition-transform duration-150`}
+                        onClick={() => setSelectedExpense(expense)}
+                        className={`relative overflow-hidden rounded-2xl border ${style.accent} ${style.bg} p-3 flex flex-col items-center text-center hover:scale-[1.03] transition-transform duration-150 cursor-pointer`}
                       >
                         <button
-                          onClick={() => deleteExpense(expense.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteExpense(expense.id);
+                          }}
                           className="absolute top-1.5 right-1.5 p-1 rounded-full hover:bg-white/60 transition-colors"
                         >
                           <Trash2 className="size-3 text-slate-300 hover:text-red-400" />
