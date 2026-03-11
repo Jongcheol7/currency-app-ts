@@ -23,7 +23,7 @@ export async function PUT(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { isDark, language, cardCount, selectedCurrencies } = body;
+  const { isDark, language, cardCount, selectedCurrencies, focusCard, inputAmount } = body;
 
   const settings = await prisma.userSettings.upsert({
     where: { userId: session.user.id },
@@ -32,6 +32,8 @@ export async function PUT(req: NextRequest) {
       ...(language !== undefined && { language }),
       ...(cardCount !== undefined && { cardCount }),
       ...(selectedCurrencies !== undefined && { selectedCurrencies }),
+      ...(focusCard !== undefined && { focusCard }),
+      ...(inputAmount !== undefined && { inputAmount }),
     },
     create: {
       userId: session.user.id,
@@ -39,6 +41,8 @@ export async function PUT(req: NextRequest) {
       language: language ?? "ko",
       cardCount: cardCount ?? 4,
       selectedCurrencies: selectedCurrencies ?? ["KRW", "USD", "VND", "JPY"],
+      focusCard: focusCard ?? 0,
+      inputAmount: inputAmount ?? "0",
     },
   });
 

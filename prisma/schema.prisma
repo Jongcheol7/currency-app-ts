@@ -33,6 +33,8 @@ model UserSettings {
   language           String  @default("ko")
   cardCount          Int     @default(4)
   selectedCurrencies Json    @default("[\"KRW\",\"USD\",\"VND\",\"JPY\"]")
+  focusCard          Int     @default(0)
+  inputAmount        String  @default("0")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

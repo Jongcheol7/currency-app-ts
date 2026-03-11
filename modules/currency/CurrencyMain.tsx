@@ -3,7 +3,7 @@ import { CountryInfo } from "@/lib/countryInfo";
 import CurrencyHeader from "./CurrencyHeader";
 import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
@@ -36,11 +36,25 @@ export default function CurrencyMain() {
         setCardCount(count);
         setSelectedCountry(currencies);
         setPrices(Array(count).fill(0));
-        setNumpad("0");
-        setFocusCard(0);
+        const focus = s.focusCard < count ? s.focusCard : 0;
+        setFocusCard(focus);
+        setNumpad(s.inputAmount || "0");
       }
     });
   }, []);
+
+  // 금액 변경 시 3초 디바운스로 DB 저장
+  const inputSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveInputToDb = useMemo(
+    () => (amount: string, focus: number) => {
+      if (!isLoggedIn) return;
+      if (inputSaveTimerRef.current) clearTimeout(inputSaveTimerRef.current);
+      inputSaveTimerRef.current = setTimeout(() => {
+        saveSettings({ focusCard: focus, inputAmount: amount });
+      }, 3000);
+    },
+    [isLoggedIn, saveSettings]
+  );
 
   const skipRecalcRef = useRef(false);
   const freshInputRef = useRef(false);
@@ -112,8 +126,8 @@ export default function CurrencyMain() {
     setFocusCard(newFocus);
     freshInputRef.current = false;
 
-    updateCurrencySettings({ cardCount: count, selectedCurrencies: newCountries });
-    saveSettings({ cardCount: count, selectedCurrencies: newCountries });
+    updateCurrencySettings({ cardCount: count, selectedCurrencies: newCountries, focusCard: newFocus, inputAmount: "0" });
+    saveSettings({ cardCount: count, selectedCurrencies: newCountries, focusCard: newFocus, inputAmount: "0" });
   };
 
   const handleFocusChange = (cardId: number) => {
@@ -149,7 +163,8 @@ export default function CurrencyMain() {
     });
 
     setPrices(newPrices);
-  }, [numPad, selectedCountry, data, focusCard]);
+    saveInputToDb(numPad, focusCard);
+  }, [numPad, selectedCountry, data, focusCard, saveInputToDb]);
 
   if (isLoading)
     return (
@@ -180,8 +195,8 @@ export default function CurrencyMain() {
             selectedCountry={selectedCountry}
             setSelectedCountry={(newCountries: string[]) => {
               setSelectedCountry(newCountries);
-              updateCurrencySettings({ cardCount, selectedCurrencies: newCountries });
-              saveSettings({ cardCount, selectedCurrencies: newCountries });
+              updateCurrencySettings({ cardCount, selectedCurrencies: newCountries, focusCard, inputAmount: numPad });
+              saveSettings({ cardCount, selectedCurrencies: newCountries, focusCard, inputAmount: numPad });
             }}
             focusCard={focusCard}
             setFocusCard={handleFocusChange}

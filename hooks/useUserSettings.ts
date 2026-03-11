@@ -9,16 +9,22 @@ type SettingsData = {
   language: string;
   cardCount: number;
   selectedCurrencies: string[];
+  focusCard: number;
+  inputAmount: string;
 };
 
 type CurrencySettings = {
   cardCount: number;
   selectedCurrencies: string[];
+  focusCard: number;
+  inputAmount: string;
 };
 
 let currencySettingsRef: CurrencySettings = {
   cardCount: 4,
   selectedCurrencies: ["KRW", "USD", "VND", "JPY"],
+  focusCard: 0,
+  inputAmount: "0",
 };
 
 let onCurrencySettingsLoaded: ((s: CurrencySettings) => void) | null = null;
@@ -65,6 +71,8 @@ export function useUserSettings() {
           currencySettingsRef = {
             cardCount: data.cardCount,
             selectedCurrencies: data.selectedCurrencies as string[],
+            focusCard: data.focusCard ?? 0,
+            inputAmount: data.inputAmount ?? "0",
           };
           onCurrencySettingsLoaded?.(currencySettingsRef);
         }
