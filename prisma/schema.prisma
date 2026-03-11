@@ -13,16 +13,30 @@ datasource db {
 // For local dev, set DIRECT_URL to the same value as DATABASE_URL in .env
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   trips         Trip[]
+  settings      UserSettings?
 
   @@map("user")
+}
+
+model UserSettings {
+  id                 String @id @default(cuid())
+  userId             String @unique
+  isDark             Boolean @default(false)
+  language           String  @default("ko")
+  cardCount          Int     @default(4)
+  selectedCurrencies Json    @default("[\"KRW\",\"USD\",\"VND\",\"JPY\"]")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("userSettings")
 }
 
 model Trip {

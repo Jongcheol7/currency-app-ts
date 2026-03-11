@@ -103,10 +103,8 @@ export default function ExpenseDetail({
 
     setUploading(true);
     try {
-      // 1. 이미지 압축 (최대 1MB, 1200px)
       const compressed = await compressImage(file);
 
-      // 2. Presigned URL 발급
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,14 +115,12 @@ export default function ExpenseDetail({
       });
       const { uploadUrl, key, imageUrl } = await res.json();
 
-      // 3. S3에 업로드
       await fetch(uploadUrl, {
         method: "PUT",
         headers: { "Content-Type": compressed.type },
         body: compressed,
       });
 
-      // 4. DB 업데이트
       const newPhoto: Photo = { key, url: imageUrl };
       await updateExpense(expense.id, {
         photos: [...photos, newPhoto],
@@ -182,7 +178,7 @@ export default function ExpenseDetail({
 
   const handleDelete = async () => {
     if (deleting) return;
-    if (window.confirm("이 지출을 삭제하시겠습니까?")) {
+    if (window.confirm(t("confirmDeleteExpense", lang))) {
       setDeleting(true);
       try {
         for (const p of photos) {
@@ -261,22 +257,22 @@ export default function ExpenseDetail({
       <div className="flex items-center gap-3 mt-2 mb-4">
         <button
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-white/70 transition-colors"
+          className="p-2 rounded-full hover:bg-white/70 dark:hover:bg-white/10 transition-colors"
         >
-          <ArrowLeft className="size-5 text-slate-500" />
+          <ArrowLeft className="size-5 text-slate-500 dark:text-slate-400" />
         </button>
-        <h2 className="font-bold text-slate-800">지출 상세</h2>
+        <h2 className="font-bold text-slate-800 dark:text-slate-100">{t("expenseDetail", lang)}</h2>
       </div>
 
       {/* Category + Amount */}
-      <div className={`${style.bg} rounded-2xl p-5 mb-4 text-center`}>
-        <div className={`inline-flex p-3 rounded-full bg-white/60 mb-3`}>
+      <div className={`${style.bg} dark:bg-zinc-800 rounded-2xl p-5 mb-4 text-center`}>
+        <div className={`inline-flex p-3 rounded-full bg-white/60 dark:bg-white/10 mb-3`}>
           <Icon className={`size-7 ${style.iconColor}`} />
         </div>
         <p className={`text-sm font-semibold ${style.iconColor} mb-1`}>
           {t(expense.category, lang)}
         </p>
-        <p className="text-3xl font-extrabold text-slate-800 tabular-nums">
+        <p className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tabular-nums">
           {expense.amount.toLocaleString()}
           <span className="text-base font-medium text-slate-400 ml-1.5">
             {currencyCode}
@@ -286,15 +282,15 @@ export default function ExpenseDetail({
           {formatDate(expense.date)}
         </p>
         {expense.memo && (
-          <p className="text-sm text-slate-500 mt-1">{expense.memo}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{expense.memo}</p>
         )}
       </div>
 
       {/* Location */}
-      <div className="bg-white/80 rounded-2xl p-4 mb-4 shadow-sm">
+      <div className="bg-white/80 dark:bg-zinc-800/80 rounded-2xl p-4 mb-4 shadow-sm">
         <div className="flex items-center gap-2 mb-2">
           <MapPin className="size-4 text-slate-400" />
-          <p className="text-sm font-semibold text-slate-600">위치</p>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("location", lang)}</p>
         </div>
 
         {isEditingLocation ? (
@@ -303,8 +299,8 @@ export default function ExpenseDetail({
               type="text"
               value={locationInput}
               onChange={(e) => setLocationInput(e.target.value)}
-              placeholder="e.g. 시부야, 도쿄"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+              placeholder={t("locationPlaceholder", lang)}
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
             <div className="flex gap-2">
               <button
@@ -312,22 +308,22 @@ export default function ExpenseDetail({
                 disabled={savingLocation}
                 className="flex-1 text-sm font-medium text-white bg-slate-700 rounded-xl py-2 hover:bg-slate-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
-                {savingLocation ? <Loader2 className="size-3.5 animate-spin" /> : "저장"}
+                {savingLocation ? <Loader2 className="size-3.5 animate-spin" /> : t("save", lang)}
               </button>
               <button
                 onClick={() => setIsEditingLocation(false)}
-                className="flex-1 text-sm font-medium text-slate-500 bg-slate-100 rounded-xl py-2 hover:bg-slate-200 transition-colors"
+                className="flex-1 text-sm font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-zinc-700 rounded-xl py-2 hover:bg-slate-200 dark:hover:bg-zinc-600 transition-colors"
               >
-                취소
+                {t("cancel", lang)}
               </button>
             </div>
           </div>
         ) : (
           <div>
             {expense.location ? (
-              <p className="text-sm text-slate-700 mb-2">{expense.location}</p>
+              <p className="text-sm text-slate-700 dark:text-slate-300 mb-2">{expense.location}</p>
             ) : (
-              <p className="text-xs text-slate-400 mb-2">위치 정보 없음</p>
+              <p className="text-xs text-slate-400 mb-2">{t("noLocation", lang)}</p>
             )}
             <div className="flex gap-2">
               <button
@@ -335,22 +331,22 @@ export default function ExpenseDetail({
                   setLocationInput(expense.location ?? "");
                   setIsEditingLocation(true);
                 }}
-                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-50 rounded-lg px-3 py-1.5 hover:bg-slate-100 transition-colors"
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-zinc-700 rounded-lg px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-zinc-600 transition-colors"
               >
                 <MapPin className="size-3" />
-                {expense.location ? "수정" : "위치 추가"}
+                {expense.location ? t("edit", lang) : t("addLocation", lang)}
               </button>
               <button
                 onClick={handleGetCurrentLocation}
                 disabled={gettingLocation}
-                className="flex items-center gap-1.5 text-xs font-medium text-blue-500 bg-blue-50 rounded-lg px-3 py-1.5 hover:bg-blue-100 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs font-medium text-blue-500 bg-blue-50 dark:bg-blue-500/10 rounded-lg px-3 py-1.5 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors disabled:opacity-50"
               >
                 {gettingLocation ? (
                   <Loader2 className="size-3 animate-spin" />
                 ) : (
                   <Navigation className="size-3" />
                 )}
-                현재 위치
+                {t("currentLocation", lang)}
               </button>
             </div>
           </div>
@@ -358,23 +354,33 @@ export default function ExpenseDetail({
 
         {/* Static Map */}
         {expense.lat && expense.lng && mapsApiKey && (
-          <div className="mt-3">
+          <a
+            href={`https://www.google.com/maps?q=${expense.lat},${expense.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block mt-3 group relative"
+          >
             <Image
               src={`https://maps.googleapis.com/maps/api/staticmap?center=${expense.lat},${expense.lng}&zoom=15&size=600x200&scale=2&markers=color:red|${expense.lat},${expense.lng}&key=${mapsApiKey}`}
               alt="location map"
               width={600}
               height={200}
-              className="w-full h-32 object-cover rounded-xl"
+              className="w-full h-32 object-cover rounded-xl group-hover:brightness-90 transition-all"
             />
-          </div>
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="bg-black/60 text-white text-xs font-medium px-3 py-1.5 rounded-full">
+                Google Maps
+              </span>
+            </div>
+          </a>
         )}
       </div>
 
       {/* Photos */}
-      <div className="bg-white/80 rounded-2xl p-4 mb-4 shadow-sm">
+      <div className="bg-white/80 dark:bg-zinc-800/80 rounded-2xl p-4 mb-4 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
           <Camera className="size-4 text-slate-400" />
-          <p className="text-sm font-semibold text-slate-600">사진</p>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("photos", lang)}</p>
           <span className="text-xs text-slate-400">{photos.length}</span>
         </div>
 
@@ -399,25 +405,25 @@ export default function ExpenseDetail({
           ))}
 
           {/* Add photo button */}
-          {session?.user && (
+          {session?.user && photos.length < 9 && (
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-500 hover:border-slate-300 transition-colors"
+              className="aspect-square rounded-xl border-2 border-dashed border-slate-200 dark:border-zinc-600 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-zinc-500 transition-colors"
             >
               {uploading ? (
                 <Loader2 className="size-6 animate-spin" />
               ) : (
                 <ImagePlus className="size-6" />
               )}
-              <span className="text-[10px]">추가</span>
+              <span className="text-[10px]">{t("add", lang)}</span>
             </button>
           )}
         </div>
 
         {!session?.user && (
           <p className="text-xs text-slate-400 mt-2">
-            사진 업로드는 로그인이 필요합니다
+            {t("photoLoginRequired", lang)}
           </p>
         )}
 
@@ -434,10 +440,10 @@ export default function ExpenseDetail({
       <button
         onClick={handleDelete}
         disabled={deleting}
-        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50"
+        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium text-red-500 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors disabled:opacity-50"
       >
         {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-        {deleting ? "삭제 중..." : "지출 삭제"}
+        {deleting ? t("deleting", lang) : t("deleteExpense", lang)}
       </button>
     </div>
   );

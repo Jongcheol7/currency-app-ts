@@ -134,9 +134,9 @@ export default function TripDetail({
       <div className="flex items-center gap-3 mt-2 mb-4">
         <button
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-white/70 transition-colors"
+          className="p-2 rounded-full hover:bg-white/70 dark:hover:bg-white/10 transition-colors"
         >
-          <ArrowLeft className="size-5 text-slate-500" />
+          <ArrowLeft className="size-5 text-slate-500 dark:text-slate-400" />
         </button>
         <div className="flex items-center gap-2 flex-1">
           {flag && (
@@ -149,7 +149,7 @@ export default function TripDetail({
             />
           )}
           <div>
-            <h2 className="font-bold text-slate-800 text-sm">{trip.name}</h2>
+            <h2 className="font-bold text-slate-800 dark:text-slate-100 text-sm">{trip.name}</h2>
             <p className="text-xs text-slate-400">
               {trip.startDate} ~ {trip.endDate}
             </p>
@@ -158,9 +158,9 @@ export default function TripDetail({
       </div>
 
       {/* Total summary */}
-      <div className="bg-white/80 rounded-2xl p-4 mb-4 shadow-sm">
+      <div className="bg-white/80 dark:bg-zinc-800/80 rounded-2xl p-4 mb-4 shadow-sm">
         <p className="text-xs text-slate-400 mb-1">{t("total", lang)}</p>
-        <p className="text-2xl font-bold text-slate-800 tabular-nums">
+        <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">
           {total.toLocaleString()}{" "}
           <span className="text-sm font-medium text-slate-400">{unitName}</span>
         </p>
@@ -178,10 +178,10 @@ export default function TripDetail({
             return (
               <div key={date}>
                 <div className="flex items-center justify-between mb-2 px-1">
-                  <p className="text-xs font-semibold text-slate-500">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     {formatDate(date)}
                   </p>
-                  <p className="text-xs font-bold text-slate-600 tabular-nums">
+                  <p className="text-xs font-bold text-slate-600 dark:text-slate-300 tabular-nums">
                     {dayTotal.toLocaleString()} {trip.currency}
                   </p>
                 </div>
@@ -193,7 +193,7 @@ export default function TripDetail({
                       <div
                         key={expense.id}
                         onClick={() => setSelectedExpense(expense)}
-                        className={`relative overflow-hidden rounded-2xl border ${style.accent} ${style.bg} p-3 flex flex-col items-center text-center hover:scale-[1.03] transition-transform duration-150 cursor-pointer`}
+                        className={`relative overflow-hidden rounded-2xl border ${style.accent} ${style.bg} dark:bg-zinc-800 dark:border-zinc-700 p-3 flex flex-col items-center text-center hover:scale-[1.03] transition-transform duration-150 cursor-pointer`}
                       >
                         <button
                           onClick={async (e) => {
@@ -207,7 +207,7 @@ export default function TripDetail({
                             }
                           }}
                           disabled={deletingExpenseId === expense.id}
-                          className="absolute top-1.5 right-1.5 p-1 rounded-full hover:bg-white/60 transition-colors"
+                          className="absolute top-1.5 right-1.5 p-1 rounded-full hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
                         >
                           {deletingExpenseId === expense.id ? (
                             <Loader2 className="size-3 text-slate-300 animate-spin" />
@@ -215,17 +215,17 @@ export default function TripDetail({
                             <Trash2 className="size-3 text-slate-300 hover:text-red-400" />
                           )}
                         </button>
-                        <div className={`p-2.5 rounded-full bg-white/60 mb-2`}>
+                        <div className={`p-2.5 rounded-full bg-white/60 dark:bg-white/10 mb-2`}>
                           <Icon className={`size-5 ${style.iconColor}`} />
                         </div>
                         <p className={`text-[11px] font-semibold ${style.iconColor} mb-1`}>
                           {t(expense.category, lang)}
                         </p>
-                        <p className="text-[15px] font-extrabold text-slate-800 tabular-nums leading-tight">
+                        <p className="text-[15px] font-extrabold text-slate-800 dark:text-slate-100 tabular-nums leading-tight">
                           {expense.amount.toLocaleString()}
                         </p>
                         {expense.memo && (
-                          <p className="text-[10px] text-slate-400 truncate w-full mt-1.5 bg-white/50 rounded-full px-2 py-0.5">
+                          <p className="text-[10px] text-slate-400 truncate w-full mt-1.5 bg-white/50 dark:bg-white/10 rounded-full px-2 py-0.5">
                             {expense.memo}
                           </p>
                         )}

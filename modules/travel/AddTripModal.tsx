@@ -43,14 +43,14 @@ export default function AddTripModal({ onClose, onSave }: Props) {
 
   return (
     <div>
-      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-50 w-80 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 z-50 w-80 rounded-2xl shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h2 className="text-lg font-bold text-slate-800">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
             {t("addTrip", lang)}
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <X className="size-4 text-slate-400" />
           </button>
@@ -59,25 +59,25 @@ export default function AddTripModal({ onClose, onSave }: Props) {
         <div className="px-5 pb-5 space-y-4">
           {/* Trip name */}
           <div>
-            <label className="text-xs font-medium text-slate-500 mb-1 block">
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
               {t("tripName", lang)}
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. 도쿄 여행"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              placeholder={t("tripPlaceholder", lang)}
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
             />
           </div>
 
           {/* Currency */}
           <div>
-            <label className="text-xs font-medium text-slate-500 mb-1 block">
-              통화
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+              {t("currency", lang)}
             </label>
             <Select value={currency} onValueChange={setCurrency}>
-              <SelectTrigger className="w-full bg-white border-slate-200">
+              <SelectTrigger className="w-full bg-white dark:bg-zinc-800 border-slate-200 dark:border-zinc-700">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -93,25 +93,25 @@ export default function AddTripModal({ onClose, onSave }: Props) {
           {/* Dates */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-slate-500 mb-1 block">
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
                 {t("startDate", lang)}
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-500 mb-1 block">
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
                 {t("endDate", lang)}
               </label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
               />
             </div>
           </div>

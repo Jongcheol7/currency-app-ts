@@ -8,6 +8,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Clock, LayoutGrid } from "lucide-react";
+import { useLangueStore } from "@/lib/store/useLangueStore";
+import { t } from "@/lib/translations";
+import type { LangCode } from "@/lib/types";
 
 type CardCount = 2 | 3 | 4 | 5 | 6;
 
@@ -17,17 +20,30 @@ type Props = {
   onCardCountChange: (count: CardCount) => void;
 };
 
+const LOCALE_MAP: Record<string, string> = {
+  ko: "ko",
+  en: "en",
+  ja: "ja",
+  zh: "zh",
+  es: "es",
+};
+
 export default function CurrencyHeader({
   updatedDate,
   cardCount,
   onCardCountChange,
 }: Props) {
+  const { language } = useLangueStore();
+  const lang = language as LangCode;
+  const locale = LOCALE_MAP[lang] ?? "ko";
+  const countSuffix = t("countItems", lang);
+
   return (
     <div className="flex justify-between items-center mt-1">
       <div className="flex items-center gap-1.5 text-slate-400">
         <Clock className="size-3.5" />
         <p className="text-xs font-medium">
-          {new Date(updatedDate).toLocaleString("ko", {
+          {new Date(updatedDate).toLocaleString(locale, {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -44,13 +60,13 @@ export default function CurrencyHeader({
             value={String(cardCount)}
             onValueChange={(v) => onCardCountChange(Number(v) as CardCount)}
           >
-            <SelectTrigger size="sm" className="w-20 bg-white/80 border-slate-200">
+            <SelectTrigger size="sm" className="w-20 bg-white/80 dark:bg-zinc-800/80 border-slate-200 dark:border-zinc-700">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {[2, 3, 4, 5, 6].map((count) => (
                 <SelectItem key={count} value={String(count)}>
-                  {count}개
+                  {count}{countSuffix}
                 </SelectItem>
               ))}
             </SelectContent>

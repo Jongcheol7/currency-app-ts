@@ -3,9 +3,14 @@ import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { useLangueStore } from "@/lib/store/useLangueStore";
+import { t } from "@/lib/translations";
+import type { LangCode } from "@/lib/types";
 
 export default function LoginPage() {
   const [signingIn, setSigningIn] = useState(false);
+  const { language } = useLangueStore();
+  const lang = language as LangCode;
 
   const handleLogin = async () => {
     if (signingIn) return;
@@ -15,7 +20,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
-      <div className="bg-white/90 rounded-2xl shadow-lg p-8 w-full max-w-sm text-center">
+      <div className="bg-white/90 dark:bg-zinc-800/90 rounded-2xl shadow-lg p-8 w-full max-w-sm text-center">
         <Image
           src="/currency-logo.png"
           width={64}
@@ -23,13 +28,13 @@ export default function LoginPage() {
           alt="logo"
           className="mx-auto mb-4"
         />
-        <h1 className="text-2xl font-bold text-slate-800 mb-2">환율 계산기</h1>
-        <p className="text-sm text-slate-400 mb-8">로그인하고 여행 지출을 관리하세요</p>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t("currencyCalculator", lang)}</h1>
+        <p className="text-sm text-slate-400 mb-8">{t("loginSubtitle", lang)}</p>
 
         <button
           onClick={handleLogin}
           disabled={signingIn}
-          className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-sm disabled:opacity-50"
+          className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-white dark:bg-zinc-700 border border-slate-200 dark:border-zinc-600 rounded-xl hover:bg-slate-50 dark:hover:bg-zinc-600 active:bg-slate-100 transition-colors shadow-sm disabled:opacity-50"
         >
           {signingIn ? (
             <Loader2 className="size-5 animate-spin text-slate-400" />
@@ -53,8 +58,8 @@ export default function LoginPage() {
               />
             </svg>
           )}
-          <span className="text-sm font-medium text-slate-700">
-            {signingIn ? "로그인 중..." : "Google로 로그인"}
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+            {signingIn ? t("loggingIn", lang) : t("loginWithGoogle", lang)}
           </span>
         </button>
       </div>

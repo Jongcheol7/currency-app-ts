@@ -59,14 +59,14 @@ export default function AddExpenseModal({
 
   return (
     <div>
-      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-50 w-80 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 z-50 w-80 rounded-2xl shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h2 className="text-lg font-bold text-slate-800">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
             {t("addExpense", lang)}
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <X className="size-4 text-slate-400" />
           </button>
@@ -75,8 +75,8 @@ export default function AddExpenseModal({
         <div className="px-5 pb-5 space-y-4">
           {/* Category */}
           <div>
-            <label className="text-xs font-medium text-slate-500 mb-2 block">
-              카테고리
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 block">
+              {t("category", lang)}
             </label>
             <div className="grid grid-cols-3 gap-2">
               {CATEGORIES.map(({ key, icon: Icon }) => (
@@ -85,8 +85,8 @@ export default function AddExpenseModal({
                   onClick={() => setCategory(key)}
                   className={`flex flex-col items-center gap-1 py-2.5 rounded-xl text-xs transition-all ${
                     category === key
-                      ? "bg-blue-50 text-blue-600 ring-1 ring-blue-200"
-                      : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+                      ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 ring-1 ring-blue-200 dark:ring-blue-500/30"
+                      : "bg-slate-50 dark:bg-zinc-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-700"
                   }`}
                 >
                   <Icon className="size-4" />
@@ -98,7 +98,7 @@ export default function AddExpenseModal({
 
           {/* Amount */}
           <div>
-            <label className="text-xs font-medium text-slate-500 mb-1 block">
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
               {t("amount", lang)} ({currencyCode})
             </label>
             <input
@@ -106,35 +106,35 @@ export default function AddExpenseModal({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm font-bold text-right focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 font-bold text-right focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
               inputMode="decimal"
             />
           </div>
 
           {/* Date */}
           <div>
-            <label className="text-xs font-medium text-slate-500 mb-1 block">
-              날짜
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+              {t("date", lang)}
             </label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
             />
           </div>
 
           {/* Memo */}
           <div>
-            <label className="text-xs font-medium text-slate-500 mb-1 block">
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
               {t("memo", lang)}
             </label>
             <input
               type="text"
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
-              placeholder="e.g. 라멘"
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              placeholder={t("memoPlaceholder", lang)}
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
             />
           </div>
 

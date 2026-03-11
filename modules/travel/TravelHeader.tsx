@@ -23,24 +23,24 @@ export default function TravelHeader() {
         onLanguageClick={() => setIsLanPopShow(true)}
       />
 
-      <div className="sticky top-0 z-30 bg-gradient-to-b from-slate-100 to-slate-100/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-30 bg-gradient-to-b from-slate-100 to-slate-100/95 dark:from-zinc-900 dark:to-zinc-900/80 backdrop-blur-md">
         <div className="relative flex justify-between items-center px-1 pt-5 pb-2">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 rounded-full hover:bg-white/70 active:bg-white/90 transition-colors"
+            className="p-2 rounded-full hover:bg-white/70 dark:hover:bg-white/10 active:bg-white/90 transition-colors"
           >
-            <Menu className="size-5 text-slate-600" />
+            <Menu className="size-5 text-slate-600 dark:text-slate-300" />
           </button>
 
-          <h1 className="absolute left-1/2 -translate-x-1/2 transform text-xl font-bold tracking-tight text-slate-800">
+          <h1 className="absolute left-1/2 -translate-x-1/2 transform text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
             {t("travelExpense", lang)}
           </h1>
 
           <Link
             href="/"
-            className="p-2 rounded-full hover:bg-white/70 active:bg-white/90 transition-colors"
+            className="p-2 rounded-full hover:bg-white/70 dark:hover:bg-white/10 active:bg-white/90 transition-colors"
           >
-            <Home className="size-5 text-slate-600" />
+            <Home className="size-5 text-slate-600 dark:text-slate-300" />
           </Link>
         </div>
       </div>

@@ -26,14 +26,14 @@ export default function MapMain() {
       <div className="relative flex justify-between items-center px-4 pt-5 pb-2">
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 rounded-full hover:bg-white/70 active:bg-white/90 transition-colors"
+          className="p-2 rounded-full hover:bg-white/70 dark:hover:bg-white/10 active:bg-white/90 transition-colors"
         >
-          <Menu className="size-5 text-slate-600" />
+          <Menu className="size-5 text-slate-600 dark:text-slate-300" />
         </button>
 
         <div className="absolute flex items-center gap-1.5 left-1/2 -translate-x-1/2 transform">
-          <Map className="size-5 text-slate-600" />
-          <h1 className="text-xl font-bold tracking-tight text-slate-800">
+          <Map className="size-5 text-slate-600 dark:text-slate-300" />
+          <h1 className="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
             {t("exchangeLocation", lang)}
           </h1>
         </div>

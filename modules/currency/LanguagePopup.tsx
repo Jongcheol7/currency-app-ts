@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useLangueStore } from "@/lib/store/useLangueStore";
+import { t } from "@/lib/translations";
+import type { LangCode } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
 import { Check, Languages } from "lucide-react";
 import { useState } from "react";
@@ -27,10 +29,10 @@ export default function LanguegePopup({ setIsLanPopShow }: Props) {
 
   return (
     <div>
-      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-50 w-72 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 z-50 w-72 rounded-2xl shadow-2xl overflow-hidden">
         <div className="flex items-center gap-2 px-5 pt-5 pb-3">
-          <Languages className="size-5 text-slate-600" />
-          <h1 className="text-lg font-bold text-slate-800">Language</h1>
+          <Languages className="size-5 text-slate-600 dark:text-slate-300" />
+          <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t("language", language as LangCode)}</h1>
         </div>
 
         <RadioGroup
@@ -44,8 +46,8 @@ export default function LanguegePopup({ setIsLanPopShow }: Props) {
               htmlFor={value}
               className={`flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer transition-colors ${
                 selectedLanguage === value
-                  ? "bg-blue-50 text-blue-700"
-                  : "hover:bg-slate-50 text-slate-700"
+                  ? "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400"
+                  : "hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-slate-300"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -71,7 +73,7 @@ export default function LanguegePopup({ setIsLanPopShow }: Props) {
             className="w-full rounded-xl"
             onClick={handleConfirm}
           >
-            확인
+            {t("confirm", language as LangCode)}
           </Button>
         </div>
       </div>

@@ -32,7 +32,7 @@ export default function TravelMain() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
-        불러오는 중...
+        {t("loading", lang)}
       </div>
     );
   }
@@ -65,11 +65,11 @@ export default function TravelMain() {
       {/* Trip list header */}
       <div className="flex items-center justify-between mt-2 mb-4">
         <p className="text-sm text-slate-400 font-medium">
-          {trips.length}개 여행
+          {t("nTrips", lang).replace("{n}", String(trips.length))}
         </p>
         <button
           onClick={() => setShowAddTrip(true)}
-          className="flex items-center gap-1.5 text-sm font-semibold text-white bg-slate-700 hover:bg-slate-800 active:bg-slate-900 px-3 py-1.5 rounded-full transition-colors shadow-sm"
+          className="flex items-center gap-1.5 text-sm font-semibold text-white bg-slate-700 dark:bg-slate-600 hover:bg-slate-800 dark:hover:bg-slate-500 active:bg-slate-900 px-3 py-1.5 rounded-full transition-colors shadow-sm"
         >
           <Plus className="size-3.5" />
           {t("addTrip", lang)}
@@ -96,7 +96,7 @@ export default function TravelMain() {
               <div
                 key={trip.id}
                 onClick={() => setSelectedTrip(trip)}
-                className="bg-white/80 hover:bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                className="bg-white/80 dark:bg-zinc-800/80 hover:bg-white dark:hover:bg-zinc-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3">
                   {flag && (
@@ -109,7 +109,7 @@ export default function TravelMain() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-slate-800 text-sm">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">
                       {trip.name}
                     </h3>
                     <p className="text-xs text-slate-400 mt-0.5">
@@ -117,7 +117,7 @@ export default function TravelMain() {
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-bold text-slate-700 tabular-nums">
+                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200 tabular-nums">
                       {tripTotal.toLocaleString()}
                     </p>
                     <p className="text-xs text-slate-400">{unitName}</p>
@@ -134,7 +134,7 @@ export default function TravelMain() {
                       }
                     }}
                     disabled={deletingTripId === trip.id}
-                    className="p-2 rounded-full hover:bg-red-50 transition-colors shrink-0"
+                    className="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors shrink-0"
                   >
                     {deletingTripId === trip.id ? (
                       <Loader2 className="size-4 text-slate-300 animate-spin" />

@@ -5,6 +5,10 @@ import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
+import { useLangueStore } from "@/lib/store/useLangueStore";
+import { t } from "@/lib/translations";
+import type { LangCode } from "@/lib/types";
+import { useUserSettings, registerCurrencySettingsCallback, updateCurrencySettings } from "@/hooks/useUserSettings";
 
 type CardCount = 2 | 3 | 4 | 5 | 6;
 const DEFAULT_CURRENCIES = ["KRW", "USD", "VND", "JPY", "EUR", "CNY"];
@@ -19,6 +23,24 @@ export default function CurrencyMain() {
   const [numPad, setNumpad] = useState("0");
   const [focusCard, setFocusCard] = useState(0);
   const { data, isLoading, error } = useExchangeRates();
+  const { language } = useLangueStore();
+  const lang = language as LangCode;
+  const { saveSettings, isLoggedIn } = useUserSettings();
+
+  // Load saved currency settings from server
+  useEffect(() => {
+    registerCurrencySettingsCallback((s) => {
+      const count = s.cardCount as CardCount;
+      const currencies = s.selectedCurrencies;
+      if (count >= 2 && count <= 6 && currencies.length === count) {
+        setCardCount(count);
+        setSelectedCountry(currencies);
+        setPrices(Array(count).fill(0));
+        setNumpad("0");
+        setFocusCard(0);
+      }
+    });
+  }, []);
 
   const skipRecalcRef = useRef(false);
   const freshInputRef = useRef(false);
@@ -89,6 +111,9 @@ export default function CurrencyMain() {
     setNumpad("0");
     setFocusCard(newFocus);
     freshInputRef.current = false;
+
+    updateCurrencySettings({ cardCount: count, selectedCurrencies: newCountries });
+    saveSettings({ cardCount: count, selectedCurrencies: newCountries });
   };
 
   const handleFocusChange = (cardId: number) => {
@@ -129,13 +154,13 @@ export default function CurrencyMain() {
   if (isLoading)
     return (
       <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
-        불러오는 중...
+        {t("loading", lang)}
       </div>
     );
   if (error)
     return (
       <div className="flex items-center justify-center py-20 text-red-400 text-sm">
-        에러가 발생했습니다...
+        {t("error", lang)}
       </div>
     );
 
@@ -153,7 +178,11 @@ export default function CurrencyMain() {
             cardId={index}
             currencies={currencies}
             selectedCountry={selectedCountry}
-            setSelectedCountry={setSelectedCountry}
+            setSelectedCountry={(newCountries: string[]) => {
+              setSelectedCountry(newCountries);
+              updateCurrencySettings({ cardCount, selectedCurrencies: newCountries });
+              saveSettings({ cardCount, selectedCurrencies: newCountries });
+            }}
             focusCard={focusCard}
             setFocusCard={handleFocusChange}
             prices={prices}
