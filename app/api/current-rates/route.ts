@@ -54,20 +54,36 @@ export async function POST() {
 
     //console.log(rates);
 
-    //DB에 insert 하자.
+    // DB에 insert 하자.
     const entries = Object.entries(rates);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const countryList = Object.keys(CountryInfo);
+
     const chunkSize = 10;
     for (let i = 0; i < entries.length; i += chunkSize) {
       const chunk = entries.slice(i, i + chunkSize);
-      const operations = chunk.map(([currency, rate]) =>
+      // CurrentRate upsert
+      const currentOps = chunk.map(([currency, rate]) =>
         prisma.currentRate.upsert({
           where: { currency },
           update: { rate },
           create: { currency, rate },
         })
       );
-      await Promise.all(operations);
-      // 💡 너무 빠르게 보내면 Supabase가 뻗음 → 살짝 쉬어줌
+      // ExchangeRate 히스토리 (앱에서 사용하는 통화만)
+      const historyOps = chunk
+        .filter(([currency]) => countryList.includes(currency))
+        .map(([currency, rate]) =>
+          prisma.exchangeRate.upsert({
+            where: {
+              base_target_date: { base: "KRW", target: currency, date: today },
+            },
+            update: { rate },
+            create: { base: "KRW", target: currency, rate, date: today },
+          })
+        );
+      await Promise.all([...currentOps, ...historyOps]);
       await delay(200);
     }
 
