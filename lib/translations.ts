@@ -491,6 +491,48 @@ const translations: Record<string, Record<LangCode, string>> = {
     zh: "已保存",
     es: "Guardado",
   },
+  calendar: {
+    ko: "캘린더",
+    en: "Calendar",
+    ja: "カレンダー",
+    zh: "日历",
+    es: "Calendario",
+  },
+  today: {
+    ko: "오늘",
+    en: "Today",
+    ja: "今日",
+    zh: "今天",
+    es: "Hoy",
+  },
+  sun: { ko: "일", en: "Sun", ja: "日", zh: "日", es: "Dom" },
+  mon: { ko: "월", en: "Mon", ja: "月", zh: "一", es: "Lun" },
+  tue: { ko: "화", en: "Tue", ja: "火", zh: "二", es: "Mar" },
+  wed: { ko: "수", en: "Wed", ja: "水", zh: "三", es: "Mié" },
+  thu: { ko: "목", en: "Thu", ja: "木", zh: "四", es: "Jue" },
+  fri: { ko: "금", en: "Fri", ja: "金", zh: "五", es: "Vie" },
+  sat: { ko: "토", en: "Sat", ja: "土", zh: "六", es: "Sáb" },
+  noSchedule: {
+    ko: "일정이 없습니다",
+    en: "No schedule",
+    ja: "予定なし",
+    zh: "没有日程",
+    es: "Sin agenda",
+  },
+  tripSchedule: {
+    ko: "여행 일정",
+    en: "Trip Schedule",
+    ja: "旅行日程",
+    zh: "旅行日程",
+    es: "Itinerario",
+  },
+  monthlyTotal: {
+    ko: "이번 달 총 지출",
+    en: "Monthly Total",
+    ja: "今月の合計",
+    zh: "本月总支出",
+    es: "Total mensual",
+  },
 };
 
 export function t(key: string, lang: LangCode): string {

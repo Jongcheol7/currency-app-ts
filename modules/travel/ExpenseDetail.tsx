@@ -9,6 +9,7 @@ import {
   Download,
   MapPin,
   Navigation,
+  Pencil,
   Trash2,
   UtensilsCrossed,
   Car,
@@ -16,6 +17,7 @@ import {
   Bed,
   Package,
   X,
+  Check,
   Loader2,
   ImagePlus,
 } from "lucide-react";
@@ -81,6 +83,48 @@ export default function ExpenseDetail({
   const [gettingLocation, setGettingLocation] = useState(false);
   const [savingLocation, setSavingLocation] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // 편집 상태
+  const [isEditing, setIsEditing] = useState(false);
+  const [editCategory, setEditCategory] = useState(expense.category);
+  const [editAmount, setEditAmount] = useState(String(expense.amount));
+  const [editDate, setEditDate] = useState(expense.date);
+  const [editMemo, setEditMemo] = useState(expense.memo);
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  const CATEGORIES = [
+    { key: "food", icon: UtensilsCrossed },
+    { key: "transport", icon: Car },
+    { key: "shopping", icon: ShoppingBag },
+    { key: "accommodation", icon: Bed },
+    { key: "sightseeing", icon: CameraIcon },
+    { key: "other", icon: Package },
+  ] as const;
+
+  const handleSaveEdit = async () => {
+    const parsed = parseFloat(editAmount);
+    if (isNaN(parsed) || parsed <= 0 || savingEdit) return;
+    setSavingEdit(true);
+    try {
+      await updateExpense(expense.id, {
+        category: editCategory,
+        amount: parsed,
+        date: editDate,
+        memo: editMemo.trim(),
+      });
+      setIsEditing(false);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditCategory(expense.category);
+    setEditAmount(String(expense.amount));
+    setEditDate(expense.date);
+    setEditMemo(expense.memo);
+    setIsEditing(false);
+  };
 
   const style = CATEGORY_STYLES[expense.category] || CATEGORY_STYLES.other;
   const Icon = style.icon;
@@ -265,24 +309,123 @@ export default function ExpenseDetail({
       </div>
 
       {/* Category + Amount */}
-      <div className={`${style.bg} dark:bg-zinc-800 rounded-2xl p-5 mb-4 text-center`}>
-        <div className={`inline-flex p-3 rounded-full bg-white/60 dark:bg-white/10 mb-3`}>
-          <Icon className={`size-7 ${style.iconColor}`} />
-        </div>
-        <p className={`text-sm font-semibold ${style.iconColor} mb-1`}>
-          {t(expense.category, lang)}
-        </p>
-        <p className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tabular-nums">
-          {expense.amount.toLocaleString()}
-          <span className="text-base font-medium text-slate-400 ml-1.5">
-            {currencyCode}
-          </span>
-        </p>
-        <p className="text-sm text-slate-400 mt-2">
-          {formatDate(expense.date)}
-        </p>
-        {expense.memo && (
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{expense.memo}</p>
+      <div className={`${style.bg} dark:bg-zinc-800 rounded-2xl p-5 mb-4 text-center relative`}>
+        {/* 편집 버튼 */}
+        {!isEditing && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="absolute top-3 right-3 p-2 rounded-full hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
+          >
+            <Pencil className="size-4 text-slate-400" />
+          </button>
+        )}
+
+        {isEditing ? (
+          <div className="space-y-4 text-left">
+            {/* 카테고리 선택 */}
+            <div>
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 block">
+                {t("category", lang)}
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {CATEGORIES.map(({ key, icon: CatIcon }) => (
+                  <button
+                    key={key}
+                    onClick={() => setEditCategory(key)}
+                    className={`flex flex-col items-center gap-1 py-2.5 rounded-xl text-xs transition-all ${
+                      editCategory === key
+                        ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 ring-1 ring-blue-200 dark:ring-blue-500/30"
+                        : "bg-white/60 dark:bg-zinc-700 text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-zinc-600"
+                    }`}
+                  >
+                    <CatIcon className="size-4" />
+                    {t(key, lang)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 금액 */}
+            <div>
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                {t("amount", lang)} ({currencyCode})
+              </label>
+              <input
+                type="number"
+                value={editAmount}
+                onChange={(e) => setEditAmount(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 font-bold text-right focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                inputMode="decimal"
+              />
+            </div>
+
+            {/* 날짜 */}
+            <div>
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                {t("date", lang)}
+              </label>
+              <input
+                type="date"
+                value={editDate}
+                onChange={(e) => setEditDate(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              />
+            </div>
+
+            {/* 메모 */}
+            <div>
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                {t("memo", lang)}
+              </label>
+              <input
+                type="text"
+                value={editMemo}
+                onChange={(e) => setEditMemo(e.target.value)}
+                placeholder={t("memoPlaceholder", lang)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              />
+            </div>
+
+            {/* 저장/취소 */}
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={handleCancelEdit}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 bg-white/60 dark:bg-zinc-700 hover:bg-white dark:hover:bg-zinc-600 transition-colors"
+              >
+                <X className="size-4" />
+                {t("cancel", lang)}
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={!editAmount || parseFloat(editAmount) <= 0 || savingEdit}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium text-white bg-slate-800 dark:bg-slate-200 dark:text-zinc-900 hover:bg-slate-700 dark:hover:bg-slate-300 transition-colors disabled:opacity-50"
+              >
+                {savingEdit ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
+                {t("save", lang)}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className={`inline-flex p-3 rounded-full bg-white/60 dark:bg-white/10 mb-3`}>
+              <Icon className={`size-7 ${style.iconColor}`} />
+            </div>
+            <p className={`text-sm font-semibold ${style.iconColor} mb-1`}>
+              {t(expense.category, lang)}
+            </p>
+            <p className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tabular-nums">
+              {expense.amount.toLocaleString()}
+              <span className="text-base font-medium text-slate-400 ml-1.5">
+                {currencyCode}
+              </span>
+            </p>
+            <p className="text-sm text-slate-400 mt-2">
+              {formatDate(expense.date)}
+            </p>
+            {expense.memo && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{expense.memo}</p>
+            )}
+          </>
         )}
       </div>
 

@@ -31,6 +31,7 @@ type TravelState = {
   trips: Trip[];
   expenses: Expense[];
   addTrip: (trip: Trip) => void;
+  updateTrip: (id: string, updates: Partial<Trip>) => void;
   deleteTrip: (id: string) => void;
   addExpense: (expense: Expense) => void;
   updateExpense: (id: string, updates: Partial<Expense>) => void;
@@ -45,6 +46,10 @@ export const useTravelStore = create<TravelState>()(
       trips: [],
       expenses: [],
       addTrip: (trip) => set((s) => ({ trips: [...s.trips, trip] })),
+      updateTrip: (id, updates) =>
+        set((s) => ({
+          trips: s.trips.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+        })),
       deleteTrip: (id) =>
         set((s) => ({
           trips: s.trips.filter((t) => t.id !== id),

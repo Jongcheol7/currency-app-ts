@@ -7,6 +7,8 @@ import { t } from "@/lib/translations";
 import type { LangCode } from "@/lib/types";
 import {
   ArrowLeft,
+  Check,
+  Pencil,
   Plus,
   Trash2,
   UtensilsCrossed,
@@ -16,6 +18,7 @@ import {
   Camera,
   Package,
   Loader2,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
@@ -40,6 +43,7 @@ type Props = {
   trip: Trip;
   expenses: Expense[];
   onBack: () => void;
+  updateTrip: (id: string, updates: Partial<{ name: string; currency: string; startDate: string; endDate: string }>) => Promise<void>;
   addExpense: (data: { tripId: string; date: string; amount: number; category: string; memo: string }) => Promise<void>;
   updateExpense: (id: string, updates: Partial<Expense>) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
@@ -49,6 +53,7 @@ export default function TripDetail({
   trip,
   expenses,
   onBack,
+  updateTrip,
   addExpense,
   updateExpense,
   deleteExpense,
@@ -58,6 +63,35 @@ export default function TripDetail({
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
+
+  // 여행 편집 상태
+  const [isEditingTrip, setIsEditingTrip] = useState(false);
+  const [editName, setEditName] = useState(trip.name);
+  const [editStartDate, setEditStartDate] = useState(trip.startDate);
+  const [editEndDate, setEditEndDate] = useState(trip.endDate);
+  const [savingTrip, setSavingTrip] = useState(false);
+
+  const handleSaveTrip = async () => {
+    if (!editName.trim() || savingTrip) return;
+    setSavingTrip(true);
+    try {
+      await updateTrip(trip.id, {
+        name: editName.trim(),
+        startDate: editStartDate,
+        endDate: editEndDate,
+      });
+      setIsEditingTrip(false);
+    } finally {
+      setSavingTrip(false);
+    }
+  };
+
+  const handleCancelTripEdit = () => {
+    setEditName(trip.name);
+    setEditStartDate(trip.startDate);
+    setEditEndDate(trip.endDate);
+    setIsEditingTrip(false);
+  };
 
   const tripExpenses = useMemo(
     () =>
@@ -138,23 +172,72 @@ export default function TripDetail({
         >
           <ArrowLeft className="size-5 text-slate-500 dark:text-slate-400" />
         </button>
-        <div className="flex items-center gap-2 flex-1">
-          {flag && (
-            <Image
-              src={flag}
-              width={28}
-              height={21}
-              alt={trip.currency}
-              className="rounded-sm shadow-sm"
+        {isEditingTrip ? (
+          <div className="flex-1 space-y-2">
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-sm font-bold dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
             />
-          )}
-          <div>
-            <h2 className="font-bold text-slate-800 dark:text-slate-100 text-sm">{trip.name}</h2>
-            <p className="text-xs text-slate-400">
-              {trip.startDate} ~ {trip.endDate}
-            </p>
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={editStartDate}
+                onChange={(e) => setEditStartDate(e.target.value)}
+                className="flex-1 px-2 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-xs dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              />
+              <span className="text-slate-400 self-center text-xs">~</span>
+              <input
+                type="date"
+                value={editEndDate}
+                onChange={(e) => setEditEndDate(e.target.value)}
+                className="flex-1 px-2 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 text-xs dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleCancelTripEdit}
+                className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-zinc-700 hover:bg-slate-200 dark:hover:bg-zinc-600 transition-colors"
+              >
+                <X className="size-3.5" />
+                {t("cancel", lang)}
+              </button>
+              <button
+                onClick={handleSaveTrip}
+                disabled={!editName.trim() || savingTrip}
+                className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl text-xs font-medium text-white bg-slate-800 dark:bg-slate-200 dark:text-zinc-900 hover:bg-slate-700 dark:hover:bg-slate-300 transition-colors disabled:opacity-50"
+              >
+                {savingTrip ? <Loader2 className="size-3.5 animate-spin" /> : <Check className="size-3.5" />}
+                {t("save", lang)}
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-2 flex-1">
+            {flag && (
+              <Image
+                src={flag}
+                width={28}
+                height={21}
+                alt={trip.currency}
+                className="rounded-sm shadow-sm"
+              />
+            )}
+            <div>
+              <h2 className="font-bold text-slate-800 dark:text-slate-100 text-sm">{trip.name}</h2>
+              <p className="text-xs text-slate-400">
+                {trip.startDate} ~ {trip.endDate}
+              </p>
+            </div>
+            <button
+              onClick={() => setIsEditingTrip(true)}
+              className="p-2 rounded-full hover:bg-white/70 dark:hover:bg-white/10 transition-colors ml-auto"
+            >
+              <Pencil className="size-4 text-slate-400" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Total summary */}

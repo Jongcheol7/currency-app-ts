@@ -41,6 +41,36 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(trip);
 }
 
+// 여행 수정
+export async function PATCH(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id, ...updates } = await req.json();
+
+  const trip = await prisma.trip.findFirst({
+    where: { id, userId: session.user.id },
+  });
+  if (!trip) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const { name, currency, startDate, endDate } = updates;
+  const updated = await prisma.trip.update({
+    where: { id },
+    data: {
+      ...(name !== undefined && { name }),
+      ...(currency !== undefined && { currency }),
+      ...(startDate !== undefined && { startDate }),
+      ...(endDate !== undefined && { endDate }),
+    },
+  });
+
+  return NextResponse.json(updated);
+}
+
 // 여행 삭제
 export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authOptions);

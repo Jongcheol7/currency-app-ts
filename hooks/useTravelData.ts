@@ -64,6 +64,26 @@ export function useTravelData() {
     [isLoggedIn, store, fetchTrips]
   );
 
+  // 여행 수정
+  const updateTrip = useCallback(
+    async (id: string, updates: Partial<{ name: string; currency: string; startDate: string; endDate: string }>) => {
+      if (!isLoggedIn) {
+        store.updateTrip(id, updates);
+        return;
+      }
+
+      const res = await fetch("/api/trips", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...updates }),
+      });
+      if (res.ok) {
+        await fetchTrips();
+      }
+    },
+    [isLoggedIn, store, fetchTrips]
+  );
+
   // 여행 삭제
   const deleteTrip = useCallback(
     async (id: string) => {
@@ -158,6 +178,7 @@ export function useTravelData() {
     loading,
     isLoggedIn,
     addTrip,
+    updateTrip,
     deleteTrip,
     addExpense,
     updateExpense,

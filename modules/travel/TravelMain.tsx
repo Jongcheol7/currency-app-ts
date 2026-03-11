@@ -14,10 +14,13 @@ import type { Trip } from "@/lib/store/useTravelStore";
 export default function TravelMain() {
   const { language } = useLangueStore();
   const lang = language as LangCode;
-  const { trips, expenses, loading, addTrip, deleteTrip, addExpense, updateExpense, deleteExpense, refresh } = useTravelData();
+  const { trips, expenses, loading, addTrip, updateTrip, deleteTrip, addExpense, updateExpense, deleteExpense, refresh } = useTravelData();
   const [showAddTrip, setShowAddTrip] = useState(false);
-  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   const [deletingTripId, setDeletingTripId] = useState<string | null>(null);
+
+  // trips 배열에서 최신 데이터 참조
+  const selectedTrip = selectedTripId ? trips.find((t) => t.id === selectedTripId) ?? null : null;
 
   const handleAddTrip = async (data: {
     name: string;
@@ -43,9 +46,10 @@ export default function TravelMain() {
         trip={selectedTrip}
         expenses={expenses}
         onBack={() => {
-          setSelectedTrip(null);
+          setSelectedTripId(null);
           refresh();
         }}
+        updateTrip={updateTrip}
         addExpense={addExpense}
         updateExpense={updateExpense}
         deleteExpense={deleteExpense}
@@ -95,7 +99,7 @@ export default function TravelMain() {
             return (
               <div
                 key={trip.id}
-                onClick={() => setSelectedTrip(trip)}
+                onClick={() => setSelectedTripId(trip.id)}
                 className="bg-white/80 dark:bg-zinc-800/80 hover:bg-white dark:hover:bg-zinc-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3">

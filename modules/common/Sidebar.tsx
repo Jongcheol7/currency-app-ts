@@ -1,5 +1,5 @@
 "use client";
-import { Calculator, ChartLine, Globe, Loader2, LogIn, LogOut, MapPin, Moon, Plane, Sun, X } from "lucide-react";
+import { Calculator, CalendarDays, ChartLine, Globe, Loader2, LogIn, LogOut, MapPin, Moon, Plane, Sun, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLangueStore } from "@/lib/store/useLangueStore";
@@ -19,6 +19,7 @@ type Props = {
 const MENU_ITEMS = [
   { href: "/", icon: Calculator, labelKey: "currencyCalculator" },
   { href: "/chart", icon: ChartLine, labelKey: "chart" },
+  { href: "/calendar", icon: CalendarDays, labelKey: "calendar" },
   { href: "/travel", icon: Plane, labelKey: "travelExpense" },
   { href: "/map", icon: MapPin, labelKey: "exchange" },
 ] as const;
