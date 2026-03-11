@@ -477,6 +477,20 @@ const translations: Record<string, Record<LangCode, string>> = {
     zh: "平均",
     es: "Prom",
   },
+  saving: {
+    ko: "저장 중...",
+    en: "Saving...",
+    ja: "保存中...",
+    zh: "保存中...",
+    es: "Guardando...",
+  },
+  saved: {
+    ko: "저장 완료",
+    en: "Saved",
+    ja: "保存完了",
+    zh: "已保存",
+    es: "Guardado",
+  },
 };
 
 export function t(key: string, lang: LangCode): string {

@@ -3,7 +3,7 @@ import { CountryInfo } from "@/lib/countryInfo";
 import CurrencyHeader from "./CurrencyHeader";
 import CurrencyCard from "./CurrencyCard";
 import NumberPad from "./NumberPad";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { useLangueStore } from "@/lib/store/useLangueStore";
 import { t } from "@/lib/translations";
@@ -26,6 +26,7 @@ export default function CurrencyMain() {
   const { language } = useLangueStore();
   const lang = language as LangCode;
   const { saveSettings, isLoggedIn } = useUserSettings();
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
 
   // Load saved currency settings from server
   useEffect(() => {
@@ -43,17 +44,30 @@ export default function CurrencyMain() {
     });
   }, []);
 
-  // 금액 변경 시 3초 디바운스로 DB 저장
+  // 금액 변경 시 3초 디바운스로 DB 직접 저장
   const inputSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const saveInputToDb = useMemo(
-    () => (amount: string, focus: number) => {
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveInputToDb = useCallback(
+    (amount: string, focus: number) => {
       if (!isLoggedIn) return;
       if (inputSaveTimerRef.current) clearTimeout(inputSaveTimerRef.current);
-      inputSaveTimerRef.current = setTimeout(() => {
-        saveSettings({ focusCard: focus, inputAmount: amount });
+      inputSaveTimerRef.current = setTimeout(async () => {
+        setSaveStatus("saving");
+        try {
+          await fetch("/api/settings", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ focusCard: focus, inputAmount: amount }),
+          });
+          setSaveStatus("saved");
+          if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+          savedTimerRef.current = setTimeout(() => setSaveStatus("idle"), 1500);
+        } catch {
+          setSaveStatus("idle");
+        }
       }, 3000);
     },
-    [isLoggedIn, saveSettings]
+    [isLoggedIn]
   );
 
   const skipRecalcRef = useRef(false);
@@ -185,6 +199,7 @@ export default function CurrencyMain() {
         updatedDate={data.updatedDate}
         cardCount={cardCount}
         onCardCountChange={handleCardCountChange}
+        saveStatus={saveStatus}
       />
       <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
         {selectedCountry.map((_, index) => (
