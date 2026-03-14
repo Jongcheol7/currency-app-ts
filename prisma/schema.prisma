@@ -1,12 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../lib/generated/prisma"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  schemas   = ["currency"]
 }
 
 // Note: DIRECT_URL is only needed for Supabase deployment.
@@ -24,6 +26,7 @@ model User {
   settings      UserSettings?
 
   @@map("user")
+  @@schema("currency")
 }
 
 model UserSettings {
@@ -39,6 +42,7 @@ model UserSettings {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("userSettings")
+  @@schema("currency")
 }
 
 model Trip {
@@ -54,6 +58,7 @@ model Trip {
   expenses Expense[]
 
   @@map("trip")
+  @@schema("currency")
 }
 
 model Expense {
@@ -71,6 +76,7 @@ model Expense {
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
   @@map("expense")
+  @@schema("currency")
 }
 
 model Account {
@@ -91,6 +97,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("account")
+  @@schema("currency")
 }
 
 model Session {
@@ -102,6 +109,7 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("session")
+  @@schema("currency")
 }
 
 model VerificationToken {
@@ -111,6 +119,7 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationToken")
+  @@schema("currency")
 }
 
 model CurrentRate {
@@ -121,6 +130,7 @@ model CurrentRate {
 
   @@unique([currency])
   @@map("currentRate")
+  @@schema("currency")
 }
 
 model ExchangeRate {
@@ -132,4 +142,5 @@ model ExchangeRate {
 
   @@unique([base,target,date])
   @@map("exchangeRate")
+  @@schema("currency")
 }
